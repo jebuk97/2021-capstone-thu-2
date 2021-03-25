@@ -9,8 +9,8 @@
  ```
  
 ## 1. 리액트 네이티브 세팅 (expo)
-# node_modules를 함께 올려놓아서 따로 설치 필요 없음!
 -Expo CLI 설치
+## node_modules를 함께 올려놓아서 따로 설치 필요 없음!
 ```
 //npm install -g expo-cli
 ```
