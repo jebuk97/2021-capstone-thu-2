@@ -37,9 +37,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const SidebarTabs = ({ navigation, descriptors }) => {
+const SidebarTabs = ({ navigation, descriptors, tableNo }) => {
   const { routes, index } = navigation.state;
-
   return (
     <View style={styles.tabContainer}>
       <View style={styles.tab, {height:'auto', marginTop:10}}>
@@ -47,7 +46,7 @@ const SidebarTabs = ({ navigation, descriptors }) => {
       </View>
       <View style={[styles.tab, {height: 100, flexDirection:'column'}]}>
           <Text style={{fontSize:16}}>Table No. </Text>  
-          <Text style={{fontSize:48}}>26</Text>
+          <Text style={{fontSize:48}}>{tableNo}</Text>
       </View>
         {routes.map((route, tabIndex) => {
             const { routeName, params } = route;

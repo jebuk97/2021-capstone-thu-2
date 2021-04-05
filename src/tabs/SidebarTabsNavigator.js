@@ -15,6 +15,7 @@ const SidebarTabsNavigator = ({ navigation, descriptors }) => {
         <SidebarTabs
           descriptors={descriptors}
           navigation={navigation}
+          tableNo = '12345'
         />
         <ActiveScreen navigation={descriptor.navigation} />
     </SafeAreaView>
