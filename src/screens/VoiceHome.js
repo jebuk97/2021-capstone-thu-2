@@ -255,7 +255,7 @@ class Home extends React.Component{
               ))}
               </View>
               <View style={styles.orderButtonContainer}>
-                <Text style={{fontSize:30, textAlign:'right', margin:10}}>{this.sumPriceHandler()}원</Text>
+                <Text style={{fontSize:30, textAlign:'right', margin:10}}> · {this.sumPriceHandler()}원</Text>
                 <TouchableOpacity onPress={()=>this.handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
               </View>
             </ScrollView>
