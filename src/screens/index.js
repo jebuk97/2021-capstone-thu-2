@@ -1,4 +1,4 @@
 import Home from './Home';
-import RedScreen from './RedScreen';
+import Receipt from './Receipt';
 
-export { Home, RedScreen };
+export { Home, Receipt };

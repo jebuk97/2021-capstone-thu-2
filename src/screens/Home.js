@@ -53,7 +53,7 @@ var menus = [
 ]
 
 var categorys = [
-  '돈까스', '음료'
+  '식사류', '음료'
 ]
 
 var sumPrice = 0;
@@ -66,6 +66,7 @@ class Home extends React.Component{
 
   state = { category: 0,
     cart: [],
+    isVoice: false,
   };
   printMenus(menu){
     if(menu.id%2==0) {
@@ -166,17 +167,44 @@ class Home extends React.Component{
     }
     this.setState({cart:cart2});
   }
+
+  handleSubmit(){
+    if(this.state.cart.length!=0){
+      console.log(this.state.cart);
+      //서버 전송 구현
+    }
+    else
+      console.log('pass');
+  }
+  onPressPlus(menu){
+    var cart = this.state.cart;
+    for(var i=0;i<cart.length;i++){
+      if(cart[i].menu == menu){
+        cart[i].qty += 1;
+        this.setState({cart:cart});
+        break;
+      }
+    }
+  }
+  onPressMinus(menu){
+    var cart = this.state.cart;
+    for(var i=0;i<cart.length;i++){
+      if(cart[i].menu == menu){
+        if(cart[i].qty>1){
+          cart[i].qty -= 1;
+          this.setState({cart:cart});
+          break;
+        } else{
+          this.popMenu(menu);
+          break;
+        }
+      }
+    }
+  }
   render() {
     return(
       <View style={{flex:1}}>
         <View style={styles.header}>
-          {/* {
-            categorys.map(function(element, index, category){
-              return (
-              );
-            })
-          } */}
-
           {this.buttonRenderer()}
         </View>
           <ScrollView stickyHeaderIndices={[1]} style={{flex: 1, backgroundColor: 'rgb(242, 242, 247)'}}>
@@ -195,17 +223,18 @@ class Home extends React.Component{
             </View>
           </ScrollView>
           <ScrollView style={styles.order}>
-              <View style={{minHeight:'80%'}}>
+              <View style={{margin:10}}><Text style={{textAlign:'center', fontSize: 24}}>장바구니</Text></View>
+              <View style={{minHeight:'73%'}}>
               {this.state.cart.map(cart=>(
                 <View style={{margin:10}}>
                   <Text style={{fontSize:30}}>{cart.menu} <TouchableOpacity onPress={()=>this.onPressDel(cart.menu)}><Text style={{fontSize:20, color:'red', lineHeight:30}}>X</Text></TouchableOpacity></Text>
-                  <Text style={{fontSize:20, marginLeft:'auto'}}><TouchableOpacity><Text>-</Text></TouchableOpacity> {cart.qty}개 <TouchableOpacity><Text>+</Text></TouchableOpacity> {cart.qty*cart.price}원</Text>
+                  <Text style={{fontSize:20, marginLeft:'auto'}}><TouchableOpacity onPress={()=>this.onPressMinus(cart.menu)}><Text style={{fontSize:20}}>-</Text></TouchableOpacity> {cart.qty}개 <TouchableOpacity onPress={()=>this.onPressPlus(cart.menu)}><Text style={{fontSize:20}}>+</Text></TouchableOpacity> <Text style={{width:100}}>{cart.qty*cart.price}원</Text></Text>
                 </View>
               ))}
               </View>
               <View style={styles.orderButtonContainer}>
                 <Text style={{fontSize:30, textAlign:'right', margin:10}}>{this.sumPriceHandler()}원</Text>
-                <TouchableOpacity style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
+                <TouchableOpacity onPress={()=>this.handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
               </View>
             </ScrollView>
         </View>
