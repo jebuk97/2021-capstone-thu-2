@@ -42,8 +42,8 @@ class Home extends React.Component {
         return (
             <View style={{ flex: 1,padding:10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(242, 242, 247)'}}>
                 <View style={[styles.container]}>
-                    <ScrollView>
-                    <View flexDirection='row' style={styles.listContainer}>
+
+                <View flexDirection='row' style={styles.listContainer}>
                             <Text style={{width:'50%', fontSize:24}}>
                                 메뉴
                             </Text>
@@ -54,6 +54,7 @@ class Home extends React.Component {
                                 가격
                             </Text>
                         </View>
+                    <ScrollView>
                     {orders.map(order=>(
                         <View flexDirection='row' style={styles.listContainer}>
                             <Text style={{width:'50%', fontSize:28}}>

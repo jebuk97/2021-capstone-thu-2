@@ -246,9 +246,9 @@ class Home extends React.Component{
               </View>
             </View>
           </ScrollView>
-          <ScrollView style={styles.order}>
+          <View style={styles.order}>
               <View style={{margin:20}}><Text style={{textAlign:'center', fontSize: 24}}>주문내역</Text></View>
-              <View style={{minHeight:'60%'}}>
+              <ScrollView style={{minHeight:'60%'}}>
               {this.state.cart.map(cart=>(
                 <View style={{margin:10, paddingLeft:10, paddingRight:10}}>
                   <View flexDirection='row' style={{padding:10}}>
@@ -263,7 +263,7 @@ class Home extends React.Component{
                   </View>
                 </View>
               ))}
-              </View>
+              </ScrollView>
               <View style={styles.orderButtonContainer}>
                 <View flexDirection='row'>
                   <Text style={{fontSize:30, textAlign:'left', margin:10, marginRight:'auto'}}>총 수량</Text>
@@ -276,7 +276,7 @@ class Home extends React.Component{
                 
                 <TouchableOpacity onPress={()=>this.handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
               </View>
-            </ScrollView>
+            </View>
         </View>
     );
   }
@@ -316,7 +316,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width:'61%',
     marginLeft:15,
-    overflow: 'scroll'
+    overflow: 'scroll',
+    marginTop:15
   },
   orderButtonContainer:{
     marginTop:20,
