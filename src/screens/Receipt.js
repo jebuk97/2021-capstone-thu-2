@@ -11,6 +11,8 @@ const primaryColor = 'rgb(0, 122, 255)';
 class Home extends React.Component {
     constructor(props){
         super(props);
+        
+        //서버 수신부
         orders=[{
             menu: '돈까스',
             qty: 1,

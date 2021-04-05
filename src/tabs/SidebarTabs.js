@@ -66,7 +66,7 @@ const SidebarTabs = ({ navigation, descriptors, tableNo }) => {
                       {
                         tabName == '음성 주문'?
                         <FontAwesome name={icon} size={24} color={color} style={{color: 'white', marginTop:75, marginBottom:5 }} />:
-                        <FontAwesome name={icon} size={24} color={color} style={{ marginRight: 10 }} />
+                        <FontAwesome name={icon} size={24} color={color} style={{ marginRight: 10, width:30, textAlign:'center' }} />
                         }
                     
                     <View style={{ flex: 1, }}>
