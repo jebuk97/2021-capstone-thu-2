@@ -3,7 +3,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 
 import { createSidebarNavigator } from '../tabs';
-import { Home, Receipt } from '../screens';
+import { Home, Receipt, VoiceHome } from '../screens';
 
 
 const sidebarNavigator = createSidebarNavigator(
@@ -15,15 +15,15 @@ const sidebarNavigator = createSidebarNavigator(
         tabName: '주문하기',
       },
     },
-    Red : {
+    Receipt : {
       screen: Receipt,
         params: {
             icon: 'inbox',
             tabName: '계산서',
         }
     },
-    Voice : {
-      screen: Receipt,
+    VoiceHome : {
+      screen: VoiceHome,
         params: {
             icon: 'microphone',
             tabName: '음성 주문',

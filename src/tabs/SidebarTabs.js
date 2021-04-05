@@ -56,7 +56,10 @@ const SidebarTabs = ({ navigation, descriptors, tableNo }) => {
             return (
               
                 <TouchableOpacity
-                    onPress={() => navigation.navigate(routeName)}
+                    onPress={() => {navigation.navigate(route.routeName, {
+                      itemId:route.routeName,
+                      otherParams: 'ohter',
+                    });}}
                     style={tabStyle}
                     key={route.routeName}
                     >
