@@ -59,6 +59,7 @@ const SidebarTabs = ({ navigation, descriptors, tableNo }) => {
                     onPress={() => {navigation.navigate(route.routeName, {
                       itemId:route.routeName,
                       otherParams: 'ohter',
+                      navigation: navigation,
                     });}}
                     style={tabStyle}
                     key={route.routeName}

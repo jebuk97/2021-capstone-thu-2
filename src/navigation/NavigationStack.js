@@ -3,7 +3,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 
 import { createSidebarNavigator } from '../tabs';
-import { Home, Receipt, VoiceHome } from '../screens';
+import { Home, Receipt, VoiceHome, Admin, Modal } from '../screens';
 
 
 const sidebarNavigator = createSidebarNavigator(
@@ -23,14 +23,14 @@ const sidebarNavigator = createSidebarNavigator(
         }
     },
     Call : {
-      screen: VoiceHome,
+      screen: Modal,
         params: {
             icon: 'user',
             tabName: '직원 호출',
         }
     },
     Admin : {
-      screen: VoiceHome,
+      screen: Admin,
         params: {
             icon: 'shield',
             tabName: '관리자 모드',
