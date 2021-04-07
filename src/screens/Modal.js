@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
 import { StackNavigator } from 'react-navigation';
+const primaryColor = 'rgb(0, 122, 255)';
 
 class App extends Component {
   componentDidMount(){
@@ -93,10 +94,10 @@ const styles = StyleSheet.create({
     alignItems:'center'
   },
   buttonOpen: {
-    backgroundColor: "#F194FF",
+    backgroundColor: primaryColor,
   },
   buttonClose: {
-    backgroundColor: "#2196F3",
+    backgroundColor: primaryColor,
   },
   textStyle: {
     color: "white",
