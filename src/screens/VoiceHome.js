@@ -1,14 +1,56 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox } from 'react-native';
+import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox, useState } from 'react-native';
 import { withOrientation } from 'react-navigation';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
-
+import { Audio } from 'expo-av'
 var menus=[];
 var categorys=[];
 var sumPrice = 0;
 
+function VoiceApp(){
+  const [recording, setRecording] = React.useState();
+
+  async function startRecording() {
+    try {
+      console.log('Requesting permissions..');
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      }); 
+      console.log('Starting recording..');
+      const recording = new Audio.Recording();
+      await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      await recording.startAsync(); 
+      setRecording(recording);
+      console.log('Recording started');
+    } catch (err) {
+      console.error('Failed to start recording', err);
+    }
+  }
+
+  async function stopRecording() {
+    console.log('Stopping recording..');
+    setRecording(undefined);
+    await recording.stopAndUnloadAsync();
+    const uri = recording.getURI(); 
+    console.log('Recording stopped and stored at', uri);
+  }
+
+  return (
+    <View style={styles.container}>
+      <Button
+        title={recording ? 'Stop Recording' : 'Start Recording'}
+        onPress={recording ? stopRecording : startRecording}
+      />
+    </View>
+  );
+}
+
+
 class Home extends React.Component{
+  
   constructor(props){
     super(props);
     this.onPressCat = this.onPressCat.bind(this);
@@ -80,6 +122,7 @@ class Home extends React.Component{
   state = { category: 0,
     cart: [],
     isVoice: false,
+    isRecording: false,
   };
   printMenus(menu){
     
@@ -198,6 +241,13 @@ class Home extends React.Component{
     else
       console.log('voice pass');
   }
+  handleRecord(){
+    this.startRecording();
+  }
+
+  handleStopRecord(){
+    this.stopRecording();
+  }
   onPressPlus(menu){
     var cart = this.state.cart;
     for(var i=0;i<cart.length;i++){
@@ -223,6 +273,7 @@ class Home extends React.Component{
       }
     }
   }
+  
   render() {
     return(
       <View style={{flex:1}}>
@@ -259,10 +310,7 @@ class Home extends React.Component{
                 <TouchableOpacity onPress={()=>this.handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
               </View>
             </ScrollView>
-            <View flexDirection='row' style={{maxWidth:'65%'}}>
-              <Text style={{marginTop:'auto', marginBottom:'auto', marginLeft:10, fontSize:32, maxWidth:'92%'}}>'어쩌구 저쩌구 어쩌구 저쩌구'</Text>
-              <TouchableOpacity onPress={()=>this.handleVoiceSubmit()} style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}><Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-mic" style={{fontSize:24}}></Ionicons></Text></TouchableOpacity>
-              </View>
+           <VoiceApp />
         </View>
     );
   }
