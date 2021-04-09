@@ -3,8 +3,6 @@ import { render } from 'react-dom';
 import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox } from 'react-native';
 import { withOrientation } from 'react-navigation';
 
-var menus=[];
-var categorys=[];
 var sumPrice = 0;
 var sumQty = 0;
 const primaryColor = 'rgb(0, 122, 255)';
@@ -13,9 +11,19 @@ class Home extends React.Component{
   constructor(props){
     super(props);
     this.onPressCat = this.onPressCat.bind(this);
+    this.state = { category: 0,
+      cart: [],
+      isVoice: false,
+      menus: [],
+      categorys: []
+    };
+    
+  }
 
+  componentDidMount(){
+    console.log(this.getNavigationParams());
     //서버 수신부
-    menus = [
+    var menus = [
       [
         {
           id: 1,
@@ -65,13 +73,13 @@ class Home extends React.Component{
       ]
     ]
     
-    categorys = [
+    var categorys = [
       '식사류', '음료'
     ]
-  }
-
-  componentDidMount(){
-    console.log(this.getNavigationParams());
+    this.setState({
+      menus: menus,
+      categorys: categorys
+    })
   }
   getNavigationParams(){
     let id = false;
@@ -80,10 +88,7 @@ class Home extends React.Component{
     }
     return id;
   }
-  state = { category: 0,
-    cart: [],
-    isVoice: false,
-  };
+  
   printMenus(menu){
     
     if(menu.id%2==0) {
@@ -153,14 +158,15 @@ class Home extends React.Component{
     )
   }
   buttonRenderer(){
-    var temp = categorys.map((category, index)=>(
+    const categorys = this.state.categorys;
+    var temp = categorys && categorys.length > 0 ? categorys.map((category, index)=>(
       <View>
         {this.state.category==index ? 
         (<TouchableOpacity onPress={()=>{this.onPressCat(index)}} style={{padding:17, borderBottomWidth:3, borderBottomColor:primaryColor}}><Text style={{fontSize:32, color:primaryColor}}>{category}</Text></TouchableOpacity>):
         (<TouchableOpacity onPress={()=>{this.onPressCat(index)}} style={{padding:17}}><Text style={{fontSize:32}}>{category}</Text></TouchableOpacity>)
         }
       </View>
-    ));
+    )):null;
     return temp;
   }
   
@@ -232,6 +238,7 @@ class Home extends React.Component{
     }
   }
   render() {
+    const menus = this.state.menus;
     return(
       <View style={{flex:1}}>
         <View style={styles.header}>
@@ -241,14 +248,14 @@ class Home extends React.Component{
 
             <View>
               <View style={styles.menuContainer}>
-                {menus[this.state.category].map(menu=>(
+                {menus[this.state.category]&&menus[this.state.category].length>0?menus[this.state.category].map(menu=>(
                   this.printMenus(menu)
-                ))}
+                )):null}
               </View>
               <View style={styles.menuContainer}>
-                {menus[this.state.category].map(menu=>(
+                {menus[this.state.category]&&menus[this.state.category].length>0?menus[this.state.category].map(menu=>(
                   this.printMenus2(menu)
-                ))}
+                )):null}
               </View>
             </View>
           </ScrollView>

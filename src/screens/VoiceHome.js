@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import { render } from 'react-dom';
-import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox, useState } from 'react-native';
+import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox} from 'react-native';
 import { withOrientation } from 'react-navigation';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Audio } from 'expo-av'
@@ -8,8 +8,10 @@ var menus=[];
 var categorys=[];
 var sumPrice = 0;
 
-function VoiceApp(){
+export function VoiceApp(){
   const [recording, setRecording] = React.useState();
+  const [printText, setPrintText] = React.useState('우측 버튼을 누르고 말하세요.');
+  
 
   async function startRecording() {
     try {
@@ -24,26 +26,35 @@ function VoiceApp(){
       await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
       await recording.startAsync(); 
       setRecording(recording);
+      setPrintText('듣고 있습니다.');
       console.log('Recording started');
     } catch (err) {
-      console.error('Failed to start recording', err);
+      stopRecording();
     }
   }
 
   async function stopRecording() {
     console.log('Stopping recording..');
     setRecording(undefined);
+    setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
     await recording.stopAndUnloadAsync();
     const uri = recording.getURI(); 
     console.log('Recording stopped and stored at', uri);
   }
+  
 
   return (
-    <View style={styles.container}>
-      <Button
-        title={recording ? 'Stop Recording' : 'Start Recording'}
+    <View flexDirection='row' style={{width:'65%', alignItems:'center'}}>
+      {recording ? 
+      <Text style={{fontSize:24, color:'rgb(255,45,85)', marginLeft:10}}>{printText}</Text>: 
+      <Text style={{fontSize:24, marginLeft:10}}>{printText}</Text>}
+      <TouchableOpacity
         onPress={recording ? stopRecording : startRecording}
-      />
+        style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}
+      >
+        {recording ? <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
+         : <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-mic" style={{fontSize:24}}></Ionicons></Text>}
+      </TouchableOpacity>
     </View>
   );
 }
@@ -121,9 +132,46 @@ class Home extends React.Component{
   }
   state = { category: 0,
     cart: [],
-    isVoice: false,
-    isRecording: false,
+    recording: undefined,
+    printText: '우측 마이크 버튼을 누르고 말하세요.',
   };
+
+  startRecording = async() => {
+    try {
+      console.log('Requesting permissions..');
+      await Audio.requestPermissionsAsync();
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: true,
+        playsInSilentModeIOS: true,
+      }); 
+      console.log('Starting recording..');
+      this.setState({
+        recording: new Audio.Recording()
+      })
+      await this.state.recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
+      await this.state.recording.startAsync(); 
+      this.setState({
+        recording : this.state.recording,
+        printText: '듣고 있습니다.'
+      });
+      console.log('Recording started');
+    } catch (err) {
+      stopRecording();
+    }
+  }
+
+  stopRecording = async() => {
+    console.log('Stopping recording..');
+    console.log(this.state.recording);
+    this.setState({
+      recording : undefined,
+      printText: '우측 마이크 버튼을 누른 후 말하세요.'
+    });
+    await this.state.recording.stopAndUnloadAsync();
+    const uri = this.state.recording['_uri']; 
+    console.log('Recording stopped and stored at', uri);
+  }
+
   printMenus(menu){
     
     if(menu.id%2==0) {
@@ -310,8 +358,20 @@ class Home extends React.Component{
                 <TouchableOpacity onPress={()=>this.handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
               </View>
             </ScrollView>
-           <VoiceApp />
-        </View>
+           {/* <VoiceApp /> */}
+           <View flexDirection='row' style={{width:'65%', alignItems:'center'}}>
+            {this.state.recording ? 
+            <Text style={{fontSize:24, color:'rgb(255,45,85)', marginLeft:10}}>{this.state.printText}</Text>: 
+            <Text style={{fontSize:24, marginLeft:10}}>{this.state.printText}</Text>}
+            <TouchableOpacity
+              onPress={this.state.recording ? ()=>this.stopRecording() : ()=>this.startRecording()}
+              style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}
+            >
+              {this.state.recording ? <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
+              : <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-mic" style={{fontSize:24}}></Ionicons></Text>}
+            </TouchableOpacity>
+            </View>
+          </View>
     );
   }
 }
