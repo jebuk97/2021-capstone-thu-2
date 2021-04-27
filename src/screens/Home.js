@@ -98,7 +98,7 @@ class Home extends React.Component{
       return (
         <TouchableOpacity style={styles.menu} onPress={()=>{this.onPressMenu(menu.menu, menu.price)}}>
          <Image 
-          style={{width:'100%', height:200, borderRadius:10}}
+          style={{width:'100%', height:200, borderRadius:5}}
           source={{uri:menu.img}}/>
         <View>
           <Text style={{fontSize:32, padding:7, paddingTop:12, textAlign:'center'}}>{menu.menu}</Text>
@@ -163,7 +163,7 @@ class Home extends React.Component{
       <View>
         {this.state.category==index ? 
         (<TouchableOpacity onPress={()=>{this.onPressCat(index)}} style={{padding:17, borderBottomWidth:3, borderBottomColor:primaryColor}}><Text style={{fontSize:32, color:primaryColor}}>{category}</Text></TouchableOpacity>):
-        (<TouchableOpacity onPress={()=>{this.onPressCat(index)}} style={{padding:17}}><Text style={{fontSize:32}}>{category}</Text></TouchableOpacity>)
+        (<TouchableOpacity onPress={()=>{this.onPressCat(index)}} style={{padding:17}}><Text style={{fontSize:32, color:'black'}}>{category}</Text></TouchableOpacity>)
         }
       </View>
     )):null;
