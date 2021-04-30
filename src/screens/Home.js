@@ -5,6 +5,7 @@ import { withOrientation } from 'react-navigation';
 
 var sumPrice = 0;
 var sumQty = 0;
+var menus = [];
 const primaryColor = 'rgb(0, 122, 255)';
 
 class Home extends React.Component{
@@ -23,7 +24,7 @@ class Home extends React.Component{
   componentDidMount(){
     console.log(this.getNavigationParams());
     //서버 수신부
-    var menus = [
+    menus = [
       [
         {
           id: 1,
@@ -60,14 +61,14 @@ class Home extends React.Component{
         {
           id: 3,
           img: '',
-          menu: '이동준',
+          menu: 'temp',
           price:12345
         },
     
         {
           id: 4,
           img: '',
-          menu: '이동준1',
+          menu: 'temp1',
           price:10000000
         }
       ]
@@ -132,7 +133,15 @@ class Home extends React.Component{
   }
 
   onPressMenu(menu, price){
+    var price = 0
     var tempCart = this.state.cart;
+    for(var i=0;i<menus.length;i++){
+      for(var j=0;j<menus[i].length;j++){
+       if(menu==menus[i][j].menu){
+        price = menus[i][j].price;
+       }
+      }
+    }
     this.setState({cart:this.isDup(tempCart, menu, price)})
   }
 
@@ -261,7 +270,10 @@ class Home extends React.Component{
           </ScrollView>
           <View style={styles.order}>
               <View style={{margin:20}}><Text style={{textAlign:'center', fontSize: 24}}>주문내역</Text></View>
-              <ScrollView style={{minHeight:'60%'}}>
+              <ScrollView 
+               ref={ref => {this.scrollView = ref}}
+              onContentSizeChange={() => this.scrollView.scrollToEnd({animated: true})}
+              style={{minHeight:'60%'}}>
               {this.state.cart.map(cart=>(
                 <View style={{margin:10, paddingLeft:10, paddingRight:10}}>
                   <View flexDirection='row' style={{padding:10}}>

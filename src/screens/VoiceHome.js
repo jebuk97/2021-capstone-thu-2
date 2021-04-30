@@ -4,62 +4,10 @@ import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, 
 import { withOrientation } from 'react-navigation';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { Audio } from 'expo-av'
-var menus=[];
 var categorys=[];
 var sumPrice = 0;
 const primaryColor = 'rgb(0, 122, 255)';
-
-export function VoiceApp(){
-  const [recording, setRecording] = React.useState();
-  const [printText, setPrintText] = React.useState('우측 버튼을 누르고 말하세요.');
-  
-
-  async function startRecording() {
-    try {
-      console.log('Requesting permissions..');
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      }); 
-      console.log('Starting recording..');
-      const recording = new Audio.Recording();
-      await recording.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-      await recording.startAsync(); 
-      setRecording(recording);
-      setPrintText('듣고 있습니다.');
-      console.log('Recording started');
-    } catch (err) {
-      stopRecording();
-    }
-  }
-
-  async function stopRecording() {
-    console.log('Stopping recording..');
-    setRecording(undefined);
-    setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI(); 
-    console.log('Recording stopped and stored at', uri);
-  }
-  
-
-  return (
-    <View flexDirection='row' style={{width:'65%', alignItems:'center'}}>
-      {recording ? 
-      <Text style={{fontSize:24, color:'rgb(255,45,85)', marginLeft:10}}>{printText}</Text>: 
-      <Text style={{fontSize:24, marginLeft:10}}>{printText}</Text>}
-      <TouchableOpacity
-        onPress={recording ? stopRecording : startRecording}
-        style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}
-      >
-        {recording ? <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
-         : <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-mic" style={{fontSize:24}}></Ionicons></Text>}
-      </TouchableOpacity>
-    </View>
-  );
-}
-
+var interval;
 
 export function Home(props) {
   const [recording, setRecording] = React.useState();
@@ -69,11 +17,16 @@ export function Home(props) {
   const [menuState, setMenuState] = React.useState([]);
   const [categorysState, setCategorysState] = React.useState([]);
   const [categoryState, setCategoryState] = React.useState(0);
-
+  const [processState, setProcessState] = React.useState(false);
+  const [seconds, setSeconds] = useState(0);
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+  var menus=[];
+  
   useEffect(() => {
     // onPressCat = onPressCat.bind(this);
     //서버 수신부
-    var menus = [
+    menus = [
       [
         {
           id: 1,
@@ -121,7 +74,7 @@ export function Home(props) {
           price:10000000
         }
       ]
-    ]
+    ];
     
     var categorys = [
       '식사류', '음료'
@@ -129,8 +82,12 @@ export function Home(props) {
     setMenuState(menus);
     setCategorysState(categorys);
     console.log(getNavigationParams());
-  }, []);
 
+    return () => {
+
+    };
+  }, []);
+  
   async function startRecording() {
     try {
       console.log('Requesting permissions..');
@@ -147,17 +104,22 @@ export function Home(props) {
       setPrintText('듣고 있습니다.');
       console.log('Recording started');
     } catch (err) {
-      stopRecording();
+      stopRecording('err');
     }
   }
 
-  async function stopRecording() {
+  async function stopRecording(stat) {
     console.log('Stopping recording..');
     setRecording(undefined);
     setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
     await recording.stopAndUnloadAsync();
     const uri = recording.getURI(); 
     console.log('Recording stopped and stored at', uri);
+    if(stat!='err'){
+      process();
+    }
+    setProcessState(false);
+    setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
   }
 
   function getNavigationParams(){
@@ -169,13 +131,12 @@ export function Home(props) {
   }
   
   function printMenus(menu){
-    console.log(menu);
     if(menu.id%2==0) {
     return;
     }
     else{
       return (
-        <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu, menu.price)}}>
+        <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu)}}>
          <Image 
           style={{width:'100%', height:200, borderRadius:5}}
           source={{uri:menu.img}}/>
@@ -192,7 +153,7 @@ export function Home(props) {
   function printMenus2(menu){
     if(menu.id%2==0) {
     return (
-      <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu, menu.price)}}>
+      <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu)}}>
         <Image 
           style={{width:'100%', height:200}}
           source={{uri:menu.img}}/>
@@ -210,9 +171,19 @@ export function Home(props) {
     }
   }
 
-  function onPressMenu(menu, price){
+  function onPressMenu(menu){
     var tempCart = cartState;
+    var price = 0;
+    console.log(menuState);
+    for(var i=0;i<menuState.length;i++){
+      for(var j=0;j<menuState[i].length;j++){
+        if(menu==menuState[i][j].menu){
+          price = menuState[i][j].price;
+        }
+      }
+    }
     setCartState(isDup(tempCart, menu, price));
+    forceUpdate();
   }
 
   function isDup(cart, menu, price){
@@ -267,7 +238,6 @@ export function Home(props) {
     popMenu(menu);
   }
   function popMenu(menu){
-    console.log(menu);
     var cart = cartState;
     var cart2 = [];
     for(var i=0;i<cart.length;i++){
@@ -313,7 +283,28 @@ export function Home(props) {
       }
     }
   }
-    const menus = menuState;
+
+  function process(){
+    setProcessState(true);
+    setPrintText('처리 중 입니다.');
+    console.log('processing');  
+    var tempCart = [
+      {
+        menu:'돈까스',
+        qty: 2
+      },
+      {
+        menu:'돈까스',
+        qty: 2
+      }
+    ];
+    for(var i=0;i<tempCart.length;i++){
+      for(var j=0;j<tempCart[i].qty;j++){
+        onPressMenu(tempCart[i].menu);
+      }
+    }
+  }
+    const menus1 = menuState;
     return(
       <View style={{flex:1}}>
         <View style={styles.header}>
@@ -323,12 +314,12 @@ export function Home(props) {
 
             <View>
               <View style={styles.menuContainer}>
-                {menus[categoryState]&&menus[categoryState].length>0?menus[categoryState].map(menu=>(
+                {menus1[categoryState]&&menus1[categoryState].length>0?menus1[categoryState].map(menu=>(
                   printMenus(menu)
                 )):null}
               </View>
               <View style={styles.menuContainer}>
-                {menus[categoryState]&&menus[categoryState].length>0?menus[categoryState].map(menu=>(
+                {menus1[categoryState]&&menus1[categoryState].length>0?menus1[categoryState].map(menu=>(
                   printMenus2(menu)
                 )):null}
               </View>
@@ -362,13 +353,13 @@ export function Home(props) {
                   <Text style={{fontSize:30, textAlign:'right', margin:10, color:primaryColor}}>{sumPriceHandler()} 원</Text>
                 </View>
                 
-                <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
+                <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기 {seconds}</Text></TouchableOpacity>
               </View>
             </View>
             <View flexDirection='row' style={{width:'65%', alignItems:'center'}}>
       {recording ? 
       <Text style={{fontSize:24, color:'rgb(255,45,85)', marginLeft:10}}>{printText}</Text>: 
-      <Text style={{fontSize:24, marginLeft:10}}>{printText}</Text>}
+      <Text style={{fontSize:24, marginLeft:10, color:'black'}}>{printText}</Text>}
       <TouchableOpacity
         onPress={recording ? stopRecording : startRecording}
         style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}
