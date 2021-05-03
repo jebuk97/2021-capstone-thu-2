@@ -1,6 +1,7 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View,ImageBackground } from 'react-native';
+import colors from '../login/colors';
 
 export default function Loading() {
     return (
@@ -28,7 +29,7 @@ const styles = StyleSheet.create({
           
     },
     text:{
-      color: "#F0F0F0",
+      color: colors.red,
       fontSize:50,
        
     }
