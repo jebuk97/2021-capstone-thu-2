@@ -9,15 +9,8 @@ import MyButton from '../login/MyButton'
 
 import Navigation from '../../src/navigation/NavigationStack';
 const primaryColor = 'rgb(0, 122, 255)';
-class LoginStackScreen extends React.Component {
-    render() {
-        return (
-            <LoginScreen/>
-        );
-    }
-};
 
-function LoginScreen() {
+export default function LoginScreen() {
     const navigation = useNavigation();
 
     // 처음에 로그인 스크린의 텍스트 입력란은 비워져 있지만, 
@@ -27,14 +20,16 @@ function LoginScreen() {
     const [password, setPassword] = useState();
     const [modalVisible, setModalVisible] = useState(false);
 
-    function handleSubmit(username, password, navigation) {
-        console.log(username+' '+password);
-        if(username=='1234' & password=='1234')
-            navigation.navigate('Table')
-        else
-            setModalVisible(true);
+    function buttonHandler(num){
+
+      //중복검사
+      if(num == '1'){
+        setModalVisible(true);
+      }
+
+      navigation.navigate('Home', {num: num});
     }
-    
+
     return (
         <View>
             <Image style={styles.logo} 
@@ -48,22 +43,13 @@ function LoginScreen() {
                 autoFocus={true} //로그인 화면에서 사용자 이름란에 커서가 오게 만들어 줍니다.
                 keyboardType="default"// 키보드 레이아웃은 일반형으로 합니다.
                 onChangeText={text => setUsername(text)}//사용자가 입력하는 텍스트를 setUsername 펑션에 담아서 상태를 갱신합니다.(=username 변수에 새로운 값이 담깁니다.)
-                placeholder="사용자 이름/username"
+                placeholder="테이블 번호 입력"
             />
-         
-            
-            <MyTextInput 
-                icon="account-key-outline"
-                autoCapitalize="none"
-                autoCorrect={false}
-                autoCompleteType="off"
-                keyboardType="default"
-                onChangeText={text => setPassword(text)}
-                placeholder=" 암호/password"
-                secureTextEntry={true}  // 암호 입력할 때 입력되는 문자를 숨깁니다.
+            <MyButton title="완료" color="brightred"
+                onPress={() => buttonHandler(username)}//버튼을 누르면 입력된 값이 VS Code 터미널에 출력되는지 확인합니다.
             />
-            <MyButton title="로그인" color="brightred"
-                onPress={() => handleSubmit(username, password, navigation)}//버튼을 누르면 입력된 값이 VS Code 터미널에 출력되는지 확인합니다.
+             <MyButton title="관리자 로그인" color="brightred"
+                onPress={() => buttonHandler('admin')}//버튼을 누르면 입력된 값이 VS Code 터미널에 출력되는지 확인합니다.
             />
             <View style={styles.centeredView}>
         <Modal
@@ -77,7 +63,7 @@ function LoginScreen() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>아이디와 암호를 확인하세요.</Text>
+              <Text style={styles.modalText}>이미 설정된 테이블입니다.</Text>
               <Pressable flexDirection='row'
                 style={[styles.button, styles.buttonClose]}
                 onPress={()=>setModalVisible(false)}
@@ -161,4 +147,3 @@ const styles = StyleSheet.create({
       }
 })
 
-export default LoginStackScreen;

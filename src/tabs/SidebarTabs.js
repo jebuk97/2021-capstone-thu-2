@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../global'
 
 import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
@@ -37,7 +38,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const SidebarTabs = ({ navigation, descriptors, tableNo }) => {
+const SidebarTabs = ({ navigation, descriptors }) => {
   const { routes, index } = navigation.state;
   return (
     <View style={styles.tabContainer}>
@@ -46,7 +47,7 @@ const SidebarTabs = ({ navigation, descriptors, tableNo }) => {
       </View>
       <View style={[styles.tab, {height: 100, flexDirection:'column'}]}>
           <Text style={{fontSize:16}}>Table No. </Text>  
-          <Text style={{fontSize:48}}>{tableNo}</Text>
+          <Text style={{fontSize:48}}>{global.tableNo}</Text>
       </View>
         {routes.map((route, tabIndex) => {
             const { routeName, params } = route;

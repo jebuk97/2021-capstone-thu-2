@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 // 우리가 만든 colors.js 를 '수입'합니다.
-import colors from '../config/colors';
+import colors from '../login/colors';
 
 function MyButton({title, onPress, color}) {
     return (

@@ -3,8 +3,8 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 
 import { createSidebarNavigator } from '../tabs';
-import { Home, Receipt, VoiceHome, Admin, Modal } from '../screens';
-
+import { Home, Receipt, VoiceHome, Admin, Modal, Table } from '../screens';
+import { LoginScreen } from '../login/LoginScreen';
 
 const sidebarNavigator = createSidebarNavigator(
   {
@@ -30,10 +30,17 @@ const sidebarNavigator = createSidebarNavigator(
         }
     },
     Admin : {
-      screen: Admin,
+      screen: Table,
         params: {
             icon: 'shield',
             tabName: '관리자 모드',
+        }
+    },
+    Temp : {
+      screen: Home,
+        params: {
+            icon: '',
+            tabName: '임시 버튼',
         }
     },
     VoiceHome : {
@@ -43,6 +50,7 @@ const sidebarNavigator = createSidebarNavigator(
             tabName: '음성 주문',
         }
     },
+    
   },
   {
     initialRouteName: 'Home',

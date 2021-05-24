@@ -1,3 +1,5 @@
+.vscode\settings.json
+
 # Expo
 .expo
 __generated__
@@ -137,3 +139,5 @@ docs/pages/versions/*/react-native/*.diff
 
 # Pods
 /ios/Pods
+.vscode/settings.json
+.vscode/settings.json

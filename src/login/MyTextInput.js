@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons'
-import colors from '../config/colors';
+import colors from '../login/colors';
 
 function MyTextInput({ icon, ...otherProps }) {
     return (
@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
         width: '100%',
         padding: 10,
         marginVertical: 5,
+        color: 'black',
     },
     iconStyle: {
         color: colors.brightred,
