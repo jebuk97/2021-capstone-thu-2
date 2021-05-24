@@ -12,7 +12,9 @@ const primaryColor = 'rgb(0, 122, 255)';
 class LoginStackScreen extends React.Component {
     render() {
         return (
+            <View style={styles.container}>
             <LoginScreen/>
+            </View>
         );
     }
 };
@@ -158,7 +160,13 @@ const styles = StyleSheet.create({
         height:26,
         fontSize:18,
         marginLeft:5
-      }
+      },
+      container: {
+        alignSelf: 'center',
+        width:300,
+        marginTop: 20,
+        padding: 5,
+      },
 })
 
 export default LoginStackScreen;
