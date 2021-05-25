@@ -3,6 +3,7 @@ import { render } from 'react-dom';
 import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox} from 'react-native';
 import { withOrientation } from 'react-navigation';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import '../../global'
 import { Audio } from 'expo-av'
 var categorys=[];
 var sumPrice = 0;
@@ -21,6 +22,7 @@ export function Home(props) {
   const [seconds, setSeconds] = useState(0);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
+  const [tableNo, setTableNo] = React.useState(global.tableNo)
   var menus=[];
   
   useEffect(() => {

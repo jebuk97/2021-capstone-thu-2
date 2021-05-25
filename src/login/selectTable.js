@@ -27,7 +27,7 @@ export default function LoginScreen() {
         setModalText('중복된 테이블 번호입니다.');
         setModalVisible(true);
       } 
-      else if(num==undefined){
+      else if(num==undefined || num.length<1){
         setModalText('테이블 번호를 입력하세요.');
         setModalVisible(true);
       }
@@ -42,7 +42,7 @@ export default function LoginScreen() {
     }
 
     return (
-        <View>
+        <View style={styles.container}>
             <Image style={styles.logo} 
                 //source={require("../assets/icon.png")} 
             />
@@ -96,65 +96,71 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-    logo: {
-        width: 150,
-        height: 150,
-        alignSelf: 'center',
-        marginTop: 100,
+  logo: {
+      width: 150,
+      height: 150,
+      alignSelf: 'center',
+      marginTop: 100,
+  },
+  centeredView: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+      marginTop: 22
     },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22
+    modalView: {
+      margin: 20,
+      backgroundColor: "white",
+      borderRadius: 20,
+      padding: 35,
+      alignItems: "center",
+      shadowColor: "#000",
+      shadowOffset: {
+        width: 0,
+        height: 2
       },
-      modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 4,
-        elevation: 5
-      },
-      button: {
-        borderRadius: 10,
-        padding: 10,
-        elevation: 2,
-        justifyContent:'center',
-        alignItems:'center'
-      },
-      buttonOpen: {
-        backgroundColor: primaryColor,
-      },
-      buttonClose: {
-        backgroundColor: primaryColor,
-      },
-      textStyle: {
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center",
-        fontSize: 24,
-      },
-      modalText: {
-        marginBottom: 15,
-        textAlign: "center",
-        fontSize: 32,
-      },
-      timerStyle: {
-        borderWidth:2,
-        borderColor: 'white',
-        borderRadius:13,
-        width:26,
-        height:26,
-        fontSize:18,
-        marginLeft:5
-      }
+      shadowOpacity: 0.25,
+      shadowRadius: 4,
+      elevation: 5
+    },
+    button: {
+      borderRadius: 10,
+      padding: 10,
+      elevation: 2,
+      justifyContent:'center',
+      alignItems:'center'
+    },
+    buttonOpen: {
+      backgroundColor: primaryColor,
+    },
+    buttonClose: {
+      backgroundColor: primaryColor,
+    },
+    textStyle: {
+      color: "white",
+      fontWeight: "bold",
+      textAlign: "center",
+      fontSize: 24,
+    },
+    modalText: {
+      marginBottom: 15,
+      textAlign: "center",
+      fontSize: 32,
+    },
+    timerStyle: {
+      borderWidth:2,
+      borderColor: 'white',
+      borderRadius:13,
+      width:26,
+      height:26,
+      fontSize:18,
+      marginLeft:5
+    },
+    container: {
+      alignSelf: 'center',
+      width:300,
+      marginTop: 20,
+      padding: 5,
+    },
 })
 

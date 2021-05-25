@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet, Modal, Text, Pressable } from 'react-native';
 import { View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -28,6 +28,19 @@ function LoginScreen() {
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [modalVisible, setModalVisible] = useState(false);
+    const [isLogin, setIsLogin] = useState();
+
+    useEffect(() => {
+      // onPressCat = onPressCat.bind(this);
+      //로그인 여부 확인
+      setIsLogin(true);  //temp
+      if(setIsLogin){
+        navigation.navigate('Table');
+      }
+  
+      return () => {
+      };
+    }, []);
 
     function handleSubmit(username, password, navigation) {
         console.log(username+' '+password);

@@ -9,7 +9,7 @@ var sumPrice = 0;
 var sumQty = 0;
 
 const primaryColor = 'rgb(0, 122, 255)';
-export default function TableDetails({route}) {
+export default function TableDetails({route, navigation}) {
   const { num } = route.params;
   const [orderState, setOrderState] = useState();
   useEffect(() => {
@@ -46,10 +46,16 @@ export default function TableDetails({route}) {
       }
       return sum;
     }
+    function handlePayment(){
+      //서버에 통보
+      console.log('pay '+num);
+      navigation.navigate('Admin');
+    }
+
     return (
         <View style={{ flex: 1,padding:10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(242, 242, 247)'}}>
             <View style={[styles.container]}>
-            <Text>{num}</Text>
+            <Text style={{margin: 10, fontSize:20}}>Table No. {num}</Text>
             <View flexDirection='row' style={styles.listContainer}>
                         <Text style={{width:'50%', fontSize:24}}>
                             메뉴
@@ -89,7 +95,7 @@ export default function TableDetails({route}) {
                             {sumPrice}원
                         </Text>
                     </View>
-                        <TouchableOpacity style={styles.button}><Text style={{color:'white', fontSize:32, textAlign:'center'}}>계산 완료</Text></TouchableOpacity>
+                        <TouchableOpacity onPress={()=>handlePayment()} style={styles.button}><Text style={{color:'white', fontSize:32, textAlign:'center'}}>결제 완료</Text></TouchableOpacity>
                 </View>
             </View>
         </View>

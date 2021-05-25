@@ -53,7 +53,7 @@ export default function Table(){
                     <Text style={styles.btntext}>{table.num}</Text>
                     <View style={{flexDirection: 'row'}}>
                         {table.menus.map(menu=>(
-                            <Text style={styles.Text, {paddingRight:10}}>{menu.menu}:{menu.qty}</Text>
+                            <Text style={styles.Text, {paddingRight:10, fontSize: 24}}>{menu.menu}:{menu.qty}</Text>
                         ))}
                     </View>
                     </TouchableOpacity>
@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
         
     },
  button:{
+     flexDirection: 'row',
      alignSelf: 'stretch',
      alignItems: 'flex-start',
      padding :20,
@@ -109,11 +110,13 @@ const styles = StyleSheet.create({
  btntext:{
      color:'#fff',
      fontWeight:'bold',
+     marginRight:10,
+     fontSize: 24
  },
  menutext:{
     color:'#000',
     fontWeight:'bold',
-    fontSize: 20,
+    fontSize: 24,
 }
 }
 
