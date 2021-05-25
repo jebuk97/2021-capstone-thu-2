@@ -1,120 +1,120 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { Image, render } from "react-native";
+import{
+    ScrollView,
+    StyleSheet,
+    Text,
+    View,
+    ImageBackground,
+    Button,
+    TouchableOpacity
+} from 'react-native';
+// import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { useNavigation } from '@react-navigation/native';
+import TableDetails from '../screens/TableDetails'
 
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+// const [menu1, setMenu1] = useState();
+// const [menu2, setMenu2] = useState();
+// const [menu3, setMenu3] = useState();;
 
-var orders= [];
-var sumPrice = 0;
-var sumQty = 0;
-const primaryColor = 'rgb(0, 122, 255)';
-
-class Home extends React.Component {
-    constructor(props){
-        super(props);
-        
+export default function Table(){
+    const navigation = useNavigation();
+    const [tableState, setTableState] = useState();
+    useEffect(() => {
+        // onPressCat = onPressCat.bind(this);
         //서버 수신부
-        orders=[{
-            menu: 'ADMIN TEMP',
-            qty: 1,
-            price: 8000
-        },
-        {
-            menu: '치즈돈까스',
-            qty: 2,
-            price: 8000
-        }]
-        sumPrice=this.sumPriceHandler();
-        sumQty=this.sumQtyHandler();
-    }
-    sumPriceHandler(){
-        var sum = 0;
-        for(var i=0;i<orders.length;i++){
-          sum += orders[i].price * orders[i].qty;
-        }
-        return sum;
-      }
-      sumQtyHandler(){
-        var sum = 0;
-        for(var i=0;i<orders.length;i++){
-          sum += orders[i].qty;
-        }
-        return sum;
-      }
-    render(){
-        return (
-            <View style={{ flex: 1,padding:10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(242, 242, 247)'}}>
-                <View style={[styles.container]}>
-
-                <View flexDirection='row' style={styles.listContainer}>
-                            <Text style={{width:'50%', fontSize:24}}>
-                                메뉴
-                            </Text>
-                            <Text style={{width:'20%', fontSize:24}}>
-                                수량
-                            </Text>
-                            <Text style={{width:'30%', fontSize:24}}>
-                                가격
-                            </Text>
-                        </View>
-                    <ScrollView>
-                    {orders.map(order=>(
-                        <View flexDirection='row' style={styles.listContainer}>
-                            <Text style={{width:'50%', fontSize:28}}>
-                                {order.menu}
-                            </Text>
-                            <Text style={{width:'20%', fontSize:28}}>
-                                {order.qty}개
-                            </Text>
-                            <Text style={{width:'30%', fontSize:28}}>
-                                {order.qty * order.price}원
-                            </Text>
-                        </View>
-                    ))}
-                        
-                    </ScrollView>
-                    <View style={[{marginBottom:10, marginTop:'auto', padding:10, paddingTop:'auto'}]}>
-                    <View flexDirection='row' style={styles.listContainer}>
-                            <Text style={{width:'50%', fontSize:28}}>
-                                총액
-                            </Text>
-                            <Text style={{width:'20%', fontSize:28}}>
-                                {sumQty}개
-                            </Text>
-                            <Text style={{width:'30%', fontSize:28, color:primaryColor}}>
-                                {sumPrice}원
-                            </Text>
-                        </View>
-                            <TouchableOpacity style={styles.button}><Text style={{color:'white', fontSize:32, textAlign:'center'}}>추가 주문하기</Text></TouchableOpacity>
+        setTableState([
+            {
+                num : 1,
+                menus : [
+                    {menu : '돈까스', qty: '1', price : '8000'},
+                    {menu : '치즈돈까스', qty: '1', price : '8000'},
+                ]  //임시
+            },
+            {
+                num : 2,
+                menus : [
+                    {menu : '치즈돈까스', qty: '1', price : '8000'}, 
+                ] //임시
+            }
+        ]
+        )
+    
+        return () => {
+        };
+      }, []);
+      const tables = tableState;
+        return(
+            <ScrollView style={styles.container}>
+            {tables&&tables.length>0?tables.map(table=>(
+            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('TableDetails',{num:table.num})}>
+                    <Text style={styles.btntext}>{table.num}</Text>
+                    <View style={{flexDirection: 'row'}}>
+                        {table.menus.map(menu=>(
+                            <Text style={styles.Text, {paddingRight:10}}>{menu.menu}:{menu.qty}</Text>
+                        ))}
                     </View>
-                </View>
-            </View>
-        );
-    }
+                    </TouchableOpacity>
+            )):null}
+            </ScrollView>
+       );
+    
 }
+
+// const Table1 = ({ navigation, route }) => {
+//     return(
+//     <View>
+//         <Text style={styles.menutext}>메뉴추가</Text>
+//         <TouchableOpacity style={styles.button} //onPress={()=>setMenu1()}>
+//         >
+//                     <Text style={styles.btntext}>국수</Text> 
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.button}>
+//                     <Text style={styles.btntext}>쌀국수</Text> 
+//         </TouchableOpacity>
+//         <TouchableOpacity style={styles.button}>
+//                     <Text style={styles.btntext}>비빔국수</Text> 
+//         </TouchableOpacity>
+//     </View>); //<Text>{route.params.name}</Text>;
+//   };
+//   const Table2 = ({ navigation, route }) => {
+//     return <Text>{route.params.name}</Text>;
+//   };
+//   const Table3 = ({ navigation, route }) => {
+//     return <Text>{route.params.name}</Text>;
+//   };
+//   const Table4 = ({ navigation, route }) => {
+//     return <Text>{route.params.name}</Text>;
+//   };
+
+
+
 const styles = StyleSheet.create({
     container:{
-        backgroundColor: 'white',
-        borderRadius:10,
-        margin: 10,
-        width: '80%',
-        height:'100%',
+        flex:1,
+        backgroundColor: '#F0F0F0',
+        paddingLeft: 60,
+        paddingRight:60,
+        
     },
-    listContainer:{
-        margin:10,
-        padding:10,
-        marginRight:40,
-        marginLeft:40,
-        borderBottomWidth:1,
-        borderBottomColor:'grey',
-    },
-    button:{
-        borderWidth: 0,
-        borderRadius:10,
-        padding:10,
-        margin:10,
-        marginRight:40,
-        marginLeft:40,
-        backgroundColor:primaryColor,
-      },
-});
-export default Home;
+ button:{
+     alignSelf: 'stretch',
+     alignItems: 'flex-start',
+     padding :20,
+     backgroundColor:'#FF5252',
+     marginTop:30,
+ },
+ btntext:{
+     color:'#fff',
+     fontWeight:'bold',
+ },
+ menutext:{
+    color:'#000',
+    fontWeight:'bold',
+    fontSize: 20,
+}
+}
+
+);

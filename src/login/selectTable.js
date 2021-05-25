@@ -19,15 +19,26 @@ export default function LoginScreen() {
     const [username, setUsername] = useState();
     const [password, setPassword] = useState();
     const [modalVisible, setModalVisible] = useState(false);
+    const [modalText, setModalText] = useState();
 
     function buttonHandler(num){
-
       //중복검사
       if(num == '1'){
+        setModalText('중복된 테이블 번호입니다.');
+        setModalVisible(true);
+      } 
+      else if(num==undefined){
+        setModalText('테이블 번호를 입력하세요.');
         setModalVisible(true);
       }
+      else if(num == 'admin'){
+        console.log(num);
+        navigation.navigate('Admin');
+      }
+      else{
+        navigation.navigate('Home', {num: num});
+      }
 
-      navigation.navigate('Home', {num: num});
     }
 
     return (
@@ -63,7 +74,7 @@ export default function LoginScreen() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>이미 설정된 테이블입니다.</Text>
+              <Text style={styles.modalText}>{modalText}</Text>
               <Pressable flexDirection='row'
                 style={[styles.button, styles.buttonClose]}
                 onPress={()=>setModalVisible(false)}

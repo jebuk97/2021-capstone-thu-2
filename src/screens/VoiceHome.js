@@ -84,7 +84,7 @@ export function Home(props) {
     console.log(getNavigationParams());
 
     return () => {
-
+      stopRecording();
     };
   }, []);
   

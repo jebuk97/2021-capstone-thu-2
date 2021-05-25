@@ -55,8 +55,7 @@ const SidebarTabs = ({ navigation, descriptors }) => {
             const color = tabIndex === index ? 'black' : 'grey';
             const tabStyle = tabName === "음성 주문" ? styles.voiceTab : styles.tab;
             return (
-              
-                <TouchableOpacity
+                tabName=='관리자 모드' && global.TableNo == 'admin'?undefined : <TouchableOpacity
                     onPress={() => {navigation.navigate(route.routeName, {
                       itemId:route.routeName,
                       otherParams: 'ohter',

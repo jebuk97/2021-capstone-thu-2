@@ -44,7 +44,7 @@ class Home extends React.Component {
         return (
             <View style={{ flex: 1,padding:10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(242, 242, 247)'}}>
                 <View style={[styles.container]}>
-
+                <Text></Text>
                 <View flexDirection='row' style={styles.listContainer}>
                             <Text style={{width:'50%', fontSize:24}}>
                                 메뉴

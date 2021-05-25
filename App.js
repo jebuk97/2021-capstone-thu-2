@@ -7,6 +7,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import LoginStackScreen from './src/login/LoginScreen';
 import Table from './src/login/selectTable';
 import Home from './App2'
+import Admin from './src/screens/Admin'
+import TableDetails from './src/screens/TableDetails'
 
 
 const Stack = createStackNavigator();
@@ -26,6 +28,8 @@ export default class App extends Component {
           }}>
               <Stack.Screen name="Login" component={LoginStackScreen} />
               <Stack.Screen name="Table" component={Table} />
+              <Stack.Screen name="TableDetails" component={TableDetails} />
+              <Stack.Screen name="Admin" component={Admin} />
               <Stack.Screen name="Home" component={Home} />
           </Stack.Navigator>
       </NavigationContainer>
