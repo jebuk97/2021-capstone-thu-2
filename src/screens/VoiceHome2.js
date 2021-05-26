@@ -1,38 +1,51 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import { render } from 'react-dom';
-import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox, Modal, Pressable} from 'react-native';
+import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox, BackHandler } from 'react-native';
 import { withOrientation } from 'react-navigation';
 import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 import '../../global'
-import { Audio } from 'expo-av'
-
-var categorys=[];
+import AudioRecorderPlayer, {
+   AVEncoderAudioQualityIOSType,
+   AVEncodingOption,
+   AudioEncoderAndroidType,
+   AudioSet,
+   AudioSourceAndroidType,
+} 
+from 'react-native-audio-recorder-player';
 var sumPrice = 0;
+var sumQty = 0;
+var menus = [];
 const primaryColor = 'rgb(0, 122, 255)';
-var interval;
 
-export function Home(props) {
-  const [recording, setRecording] = React.useState();
-  const [printText, setPrintText] = React.useState('우측 버튼을 누르고 말하세요.');
-  const [cartState, setCartState] = React.useState([]);
-  const [voiceState, setVoiceState] = React.useState(false);
-  const [menuState, setMenuState] = React.useState([]);
-  const [categorysState, setCategorysState] = React.useState([]);
-  const [categoryState, setCategoryState] = React.useState(0);
-  const [processState, setProcessState] = React.useState(false);
-  const [seconds, setSeconds] = useState(0);
-  const [, updateState] = React.useState();
-  const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [tableNo, setTableNo] = React.useState(global.tableNo);
-  const [modalVisible, setModalVisible] = useState(true);
-  var record = null;
-  var menus=[];
-  
-  useEffect(() => {
-    if(modalVisible==true){
-      startRecording();
-    }
-    // onPressCat = onPressCat.bind(this);
+class Home extends React.Component{
+  constructor(props){
+    super(props);
+    this.onPressCat = this.onPressCat.bind(this);
+    this.state = { category: 0,
+      cart: [],
+      isVoice: false,
+      menus: [],
+      categorys: [],
+      tableNo : global.tableNo,
+      isLoggingIn: false,
+      recordSecs: 0,
+      recordTime: '00:00:00',
+      currentPositionSec: 0,
+      currentDurationSec: 0,
+      playTime: '00:00:00',
+      duration: '00:00:00',
+      recording: false,
+      printText: '우측 버튼을 터치한 후 말하세요.',
+    };
+    this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
+    this.audioRecorderPlayer = new AudioRecorderPlayer();
+  }
+  handleBackPress(){
+    console.log("Blocking Back");
+    return true;
+}
+  componentDidMount(){
+    console.log(this.getNavigationParams());
     //서버 수신부
     menus = [
       [
@@ -70,80 +83,69 @@ export function Home(props) {
         }
       ]
     ]
-
+    
     var categorys = [
       '식사류', '음료'
     ]
-    setMenuState(menus);
-    setCategorysState(categorys);
-    console.log(getNavigationParams());
+    this.setState({
+      menus: menus,
+      categorys: categorys
+    })
+  }
 
-    return () => {
-      stopRecording('exit');
-      setTimeout(function() {
-      }, 300);
+  onStartRecord = async() => {
+    const path = 'hello.m4a';
+    this.setState({
+      printText: '듣고 있습니다...',
+    });
+    const audioSet = {
+      AudioEncoderAndroid: AudioEncoderAndroidType.AAC,
+      AudioSourceAndroid: AudioSourceAndroidType.MIC,
+      AVEncoderAudioQualityKeyIOS: AVEncoderAudioQualityIOSType.high,
+      AVNumberOfChannelsKeyIOS: 2,
+      AVFormatIDKeyIOS: AVEncodingOption.aac,
     };
-  }, []);
-  
-  async function startRecording() {
-      setModalVisible(true);
-    try {
-      console.log('Requesting permissions..');
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      }); 
-      console.log('Starting recording..');
-      record = new Audio.Recording();
-      await record.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-      await record.startAsync(); 
-      setRecording(record);
-      setPrintText('듣고 있습니다.');
-      console.log('Recording started');
-    } catch (err) {
-      console.log(err);
-      stopRecording('err');
-    }
+    console.log('audioSet', audioSet);
+    const uri = await this.audioRecorderPlayer.startRecorder(path, audioSet);
+    this.audioRecorderPlayer.addRecordBackListener((e) => {
+      this.setState({
+        recording: true,
+        recordSecs: e.current_position,
+        recordTime: this.audioRecorderPlayer.mmssss(
+          Math.floor(e.current_position),
+        ),
+      });
+    });
+    console.log(`uri: ${uri}`);
   }
 
-  async function stopRecording(stat) {
-    if(!recording){
-      setRecording(record);
-      console.log(recording);
-    }
-    console.log('Stopping recording..');
-    setRecording(undefined);
-    setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
-    try {
-      await recording.stopAndUnloadAsync();
-    } catch (error) {
-      console.log(error);
-    }
-    const uri = recording.getURI(); 
-    console.log('Recording stopped and stored at', uri);
-    if(stat!='err' || stat!='exit'){
-      process();
-    }
-    setProcessState(false);
-    setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
-  }
+  onStopRecord = async () => {
+    const result = await this.audioRecorderPlayer.stopRecorder();
+    this.audioRecorderPlayer.removeRecordBackListener();
+    this.setState({
+      printText: '우측 버튼을 터치한 후 말하세요.',
+      recordSecs: 0,
+      recording: false,
+    });
+    console.log(result);  
+  };
 
-  function getNavigationParams(){
+  getNavigationParams(){
     let id = false;
-    if(props.navigation.state.params) {
-      id = props.navigation.state.params.itemId;
+    if(this.props.navigation.state.params) {
+      id = this.props.navigation.state.params.itemId;
     }
     return id;
   }
   
-  function printMenus(menu){
+  printMenus(menu){
+    
     if(menu.id%2==0) {
     return;
     }
     else{
       return (
-        <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu)}}>
+        <TouchableOpacity style={styles.menu} onPress={()=>{this.onPressMenu(menu.menu, menu.price)}}>
          <Image 
           style={{width:'100%', height:200, borderRadius:5}}
           source={{uri:menu.img}}/>
@@ -157,10 +159,10 @@ export function Home(props) {
       );
     }
   }
-  function printMenus2(menu){
+  printMenus2(menu){
     if(menu.id%2==0) {
     return (
-      <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu)}}>
+      <TouchableOpacity style={styles.menu} onPress={()=>{this.onPressMenu(menu.menu, menu.price)}}>
         <Image 
           style={{width:'100%', height:200}}
           source={{uri:menu.img}}/>
@@ -178,21 +180,20 @@ export function Home(props) {
     }
   }
 
-  function onPressMenu(menu){
-    var tempCart = cartState;
-    var price = 0;
-    for(var i=0;i<menuState.length;i++){
-      for(var j=0;j<menuState[i].length;j++){
-        if(menu==menuState[i][j].menu){
-          price = menuState[i][j].price;
-        }
+  onPressMenu(menu, price){
+    var price = 0
+    var tempCart = this.state.cart;
+    for(var i=0;i<menus.length;i++){
+      for(var j=0;j<menus[i].length;j++){
+       if(menu==menus[i][j].menu){
+        price = menus[i][j].price;
+       }
       }
     }
-    setCartState(isDup(tempCart, menu, price));
-    forceUpdate();
+    this.setState({cart:this.isDup(tempCart, menu, price)})
   }
 
-  function isDup(cart, menu, price){
+  isDup(cart, menu, price){
     for(var i=0;i<cart.length;i++){
       if(cart[i].menu == menu){
         cart[i].qty += 1;
@@ -207,32 +208,35 @@ export function Home(props) {
     return cart;
   }
 
-  function onPressCat(index){
-    setCategoryState(index);
+  onPressCat(index){
+    this.setState({
+      category:index,
+    }
+    )
   }
-  function buttonRenderer(){
-    const categorys = categorysState;
+  buttonRenderer(){
+    const categorys = this.state.categorys;
     var temp = categorys && categorys.length > 0 ? categorys.map((category, index)=>(
       <View>
-        {categoryState==index ? 
-        (<TouchableOpacity onPress={()=>{onPressCat(index)}} style={{padding:17, borderBottomWidth:3, borderBottomColor:primaryColor}}><Text style={{fontSize:32, color:primaryColor}}>{category}</Text></TouchableOpacity>):
-        (<TouchableOpacity onPress={()=>{onPressCat(index)}} style={{padding:17}}><Text style={{fontSize:32, color:'black'}}>{category}</Text></TouchableOpacity>)
+        {this.state.category==index ? 
+        (<TouchableOpacity onPress={()=>{this.onPressCat(index)}} style={{padding:17, borderBottomWidth:3, borderBottomColor:primaryColor}}><Text style={{fontSize:32, color:primaryColor}}>{category}</Text></TouchableOpacity>):
+        (<TouchableOpacity onPress={()=>{this.onPressCat(index)}} style={{padding:17}}><Text style={{fontSize:32, color:'black'}}>{category}</Text></TouchableOpacity>)
         }
       </View>
     )):null;
     return temp;
   }
   
-  function sumPriceHandler(){
-    var cart = cartState;
+  sumPriceHandler(){
+    var cart = this.state.cart;
     var sum = 0;
     for(var i=0;i<cart.length;i++){
       sum += cart[i].price * cart[i].qty;
     }
     return sum;
   }
-  function sumQtyHandler(){
-    var cart = cartState;
+  sumQtyHandler(){
+    var cart = this.state.cart;
     var sum = 0;
     for(var i=0;i<cart.length;i++){
       sum += cart[i].qty;
@@ -240,11 +244,12 @@ export function Home(props) {
     return sum;
   }
 
-  function onPressDel(menu){
-    popMenu(menu);
+  onPressDel(menu){
+    this.popMenu(menu);
   }
-  function popMenu(menu){
-    var cart = cartState;
+  popMenu(menu){
+    console.log(menu);
+    var cart = this.state.cart;
     var cart2 = [];
     for(var i=0;i<cart.length;i++){
       if(cart[i].menu == menu){
@@ -252,133 +257,81 @@ export function Home(props) {
       }
       cart2.push(cart[i]);
     }
-    setCartState(cart2);
+    this.setState({cart:cart2});
   }
 
-  function handleSubmit(){
-    if(cartState.length!=0){
-      console.log(cartState);
-      setCartState([]);
+  handleSubmit(){
+    if(this.state.cart.length!=0){
+      console.log(this.state.cart);
+      this.setState({cart:[]})
       //서버 전송 구현
     }
     else
       console.log('pass');
   }
-  function onPressPlus(menu){
-    var cart = cartState;
+  onPressPlus(menu){
+    var cart = this.state.cart;
     for(var i=0;i<cart.length;i++){
       if(cart[i].menu == menu){
         cart[i].qty += 1;
-        setCartState(cart);
+        this.setState({cart:cart});
         break;
       }
     }
   }
-  function onPressMinus(menu){
-    var cart = cartState;
+  onPressMinus(menu){
+    var cart = this.state.cart;
     for(var i=0;i<cart.length;i++){
       if(cart[i].menu == menu){
         if(cart[i].qty>1){
           cart[i].qty -= 1;
-          setCartState(cart);
+          this.setState({cart:cart});
           break;
         } else{
-          popMenu(menu);
+          this.popMenu(menu);
           break;
         }
       }
     }
   }
-
-  function process(){
-    setProcessState(true);
-    setPrintText('처리 중 입니다.');
-    console.log('processing');  
-    
-    var tempCart = [
-      {
-        menu:'칼국수',
-        qty: 2
-      },
-      {
-        menu:'칼국수',
-        qty: 2
-      }
-    ];
-    for(var i=0;i<tempCart.length;i++){
-      for(var j=0;j<tempCart[i].qty;j++){
-        onPressMenu(tempCart[i].menu);
-      }
-    }
-    setModalVisible(false);
-  }
-
-  function handleConfirm(){
-    stopRecording();
-  }
-
-    const menus1 = menuState;
+  render() {
+    const menus = this.state.menus;
     return(
       <View style={{flex:1}}>
-        <View>
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert("Modal has been closed.");
-            this.setModalVisible(!modalVisible);
-          }}
-        >
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={[styles.modalText, {fontSize:32}]}>{printText}</Text>
-              <Pressable flexDirection='row'
-                style={[styles.button, styles.buttonClose, {backgroundColor: 'rgb(255,45,85)'}]}
-                onPress={()=>handleConfirm()}
-              >
-               <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
-              </Pressable>
-            </View>
-          </View>
-        </Modal>
-        <Pressable
-          style={[styles.button, styles.buttonOpen, {display:'none'}]}
-          onPress={() => handleConfirm()}
-        >
-        </Pressable>
-      </View>
         <View style={styles.header}>
-          {buttonRenderer()}
+          {this.buttonRenderer()}
         </View>
           <ScrollView stickyHeaderIndices={[1]} style={{flex: 1, backgroundColor: 'rgb(242, 242, 247)'}}>
 
             <View>
               <View style={styles.menuContainer}>
-                {menus1[categoryState]&&menus1[categoryState].length>0?menus1[categoryState].map(menu=>(
-                  printMenus(menu)
+                {menus[this.state.category]&&menus[this.state.category].length>0?menus[this.state.category].map(menu=>(
+                  this.printMenus(menu)
                 )):null}
               </View>
               <View style={styles.menuContainer}>
-                {menus1[categoryState]&&menus1[categoryState].length>0?menus1[categoryState].map(menu=>(
-                  printMenus2(menu)
+                {menus[this.state.category]&&menus[this.state.category].length>0?menus[this.state.category].map(menu=>(
+                  this.printMenus2(menu)
                 )):null}
               </View>
             </View>
           </ScrollView>
           <View style={styles.order}>
               <View style={{margin:20}}><Text style={{textAlign:'center', fontSize: 24}}>주문내역</Text></View>
-              <ScrollView style={{minHeight:'60%'}}>
-              {cartState.map(cart=>(
+              <ScrollView 
+               ref={ref => {this.scrollView = ref}}
+              onContentSizeChange={() => this.scrollView.scrollToEnd({animated: true})}
+              style={{minHeight:'60%'}}>
+              {this.state.cart.map(cart=>(
                 <View style={{margin:10, paddingLeft:10, paddingRight:10}}>
                   <View flexDirection='row' style={{padding:10}}>
                     <Text style={{fontSize:30, width:'90%'}}>{cart.menu}</Text>
-                    <TouchableOpacity onPress={()=>onPressDel(cart.menu)}><Text style={{fontSize:30, color:'red', lineHeight:30, marginLeft:'auto'}}>×</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.onPressDel(cart.menu)}><Text style={{fontSize:30, color:'red', lineHeight:30, marginLeft:'auto'}}>×</Text></TouchableOpacity>
                   </View>
                   <View flexDirection='row' style={{padding:10}}>
-                    <TouchableOpacity onPress={()=>onPressMinus(cart.menu)}><Text style={{fontSize:20, width:30, textAlign:'center'}}>-</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.onPressMinus(cart.menu)}><Text style={{fontSize:20, width:30, textAlign:'center'}}>-</Text></TouchableOpacity>
                     <Text style={{fontSize:20, width:30, textAlign:'center'}}>{cart.qty}</Text> 
-                    <TouchableOpacity onPress={()=>onPressPlus(cart.menu)}><Text style={{fontSize:20, width:30, textAlign:'center'}}>+</Text></TouchableOpacity>
+                    <TouchableOpacity onPress={()=>this.onPressPlus(cart.menu)}><Text style={{fontSize:20, width:30, textAlign:'center'}}>+</Text></TouchableOpacity>
                     <Text style={{fontSize:20, marginLeft:'auto', color:primaryColor}}>{cart.qty*cart.price} 원</Text>
                   </View>
                 </View>
@@ -387,33 +340,32 @@ export function Home(props) {
               <View style={styles.orderButtonContainer}>
                 <View flexDirection='row'>
                   <Text style={{fontSize:30, textAlign:'left', margin:10, marginRight:'auto'}}>총 수량</Text>
-                  <Text style={{fontSize:30, textAlign:'right', margin:10}}>{sumQtyHandler()} 개</Text>
+                  <Text style={{fontSize:30, textAlign:'right', margin:10}}>{this.sumQtyHandler()} 개</Text>
                 </View>
                 <View flexDirection='row'>
                   <Text style={{fontSize:30, textAlign:'left', margin:10, marginRight:'auto', color:primaryColor}}>총 금액</Text>
-                  <Text style={{fontSize:30, textAlign:'right', margin:10, color:primaryColor}}>{sumPriceHandler()} 원</Text>
+                  <Text style={{fontSize:30, textAlign:'right', margin:10, color:primaryColor}}>{this.sumPriceHandler()} 원</Text>
                 </View>
                 
-                <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
+                <TouchableOpacity onPress={()=>this.handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
               </View>
             </View>
             <View flexDirection='row' style={{width:'65%', alignItems:'center'}}>
-      {recording ? 
-      <Text style={{fontSize:24, color:'rgb(255,45,85)', marginLeft:10}}>{printText}</Text>: 
-      <Text style={{fontSize:24, marginLeft:10, color:'black'}}>{printText}</Text>}
-      <TouchableOpacity
-        onPress={recording ? stopRecording : startRecording}
-        style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}
-      >
-        {recording ? <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
-         : <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-mic" style={{fontSize:24}}></Ionicons></Text>}
-      </TouchableOpacity>
-    </View>
-    
-    </View>
-        
+            {this.state.recording ? 
+            <Text style={{fontSize:24, color:'rgb(255,45,85)', marginLeft:10}}>{this.state.printText}</Text>: 
+            <Text style={{fontSize:24, marginLeft:10, color:'black'}}>{this.state.printText}</Text>}
+            <TouchableOpacity
+              onPress={this.state.recording ? this.onStopRecord : this.onStartRecord}
+              style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}
+            >
+              {this.state.recording ? <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
+              : <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-mic" style={{fontSize:24}}></Ionicons></Text>}
+            </TouchableOpacity>
+          </View>
+        </View>
     );
-              };
+  }
+}
 const chartHeight = Dimensions.get('window').height;
 const styles = StyleSheet.create({
   button:{
@@ -459,27 +411,7 @@ const styles = StyleSheet.create({
   },
   header:{
     flexDirection:'row'
-  },centeredView: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    marginTop: 22
-  },
-  modalView: {
-    margin: 20,
-    backgroundColor: "white",
-    borderRadius: 20,
-    padding: 35,
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5
-  },
+  }
 });
 
 export default Home;

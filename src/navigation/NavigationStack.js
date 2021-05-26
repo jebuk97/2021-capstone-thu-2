@@ -3,7 +3,7 @@ import React from 'react';
 import { createAppContainer } from 'react-navigation';
 
 import { createSidebarNavigator } from '../tabs';
-import { Home, Receipt, VoiceHome, Admin, Modal, Table } from '../screens';
+import { Home, Receipt, VoiceHome, Admin, Modal, Table, VoiceHome2 } from '../screens';
 import { LoginScreen } from '../login/LoginScreen';
 
 const sidebarNavigator = createSidebarNavigator(
@@ -29,20 +29,13 @@ const sidebarNavigator = createSidebarNavigator(
             tabName: '직원 호출',
         }
     },
-    Admin : {
-      screen: Table,
-        params: {
-            icon: 'shield',
-            tabName: '관리자 모드',
-        }
-    },
-    Temp : {
-      screen: Home,
-        params: {
-            icon: '',
-            tabName: '임시 버튼',
-        }
-    },
+    // VoiceHome2 : {
+    //   screen: VoiceHome2,
+    //     params: {
+    //         icon: 'microphone',
+    //         tabName: '음성 주문2',
+    //     }
+    // },
     VoiceHome : {
       screen: VoiceHome,
         params: {

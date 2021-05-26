@@ -1,7 +1,7 @@
 import React from 'react';
 import '../../global'
 
-import { View, TouchableOpacity, Text, StyleSheet } from 'react-native';
+import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
 import { FontAwesome } from '@expo/vector-icons';
 
 const styles = StyleSheet.create({
@@ -41,9 +41,9 @@ const styles = StyleSheet.create({
 const SidebarTabs = ({ navigation, descriptors }) => {
   const { routes, index } = navigation.state;
   return (
-    <View style={styles.tabContainer}>
+    <View style={[styles.tabContainer, {paddingTop:20}]}>
       <View style={styles.tab, {height:'auto', marginTop:10}}>
-          <Text style={{fontSize:48}}>Logo</Text>       
+          <Image source={require('../../assets/logo.png')} style={{width:100, height:100}}></Image>     
       </View>
       <View style={[styles.tab, {height: 100, flexDirection:'column'}]}>
           <Text style={{fontSize:16}}>Table No. </Text>  
