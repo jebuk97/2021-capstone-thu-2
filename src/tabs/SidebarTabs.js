@@ -2,7 +2,7 @@ import React from 'react';
 import '../../global'
 
 import { View, TouchableOpacity, Text, StyleSheet, Image } from 'react-native';
-import { FontAwesome } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const styles = StyleSheet.create({
   header: { position: 'absolute', top: 0 },
@@ -66,8 +66,8 @@ const SidebarTabs = ({ navigation, descriptors }) => {
                     >
                       {
                         tabName == '음성 주문'?
-                        <FontAwesome name={icon} size={24} color={color} style={{color: 'white', marginTop:75, marginBottom:5 }} />:
-                        <FontAwesome name={icon} size={24} color={color} style={{ marginRight: 10, width:30, textAlign:'center' }} />
+                        <Icon name={icon} size={24} color={color} style={{color: 'white', marginTop:75, marginBottom:5 }} />:
+                        <Icon name={icon} size={24} color={color} style={{ marginRight: 10, width:30, textAlign:'center' }} />
                         }
                     
                     <View style={{ flex: 1, }}>
@@ -82,8 +82,10 @@ const SidebarTabs = ({ navigation, descriptors }) => {
                         }
                     </View>
                 </TouchableOpacity>
+                
             );
         })}
+
     </View>
   );
 };

@@ -7,7 +7,6 @@ import { useNavigation } from '@react-navigation/native';
 import MyTextInput from '../login/MyTextInput';
 import MyButton from '../login/MyButton'
 
-import Navigation from '../../src/navigation/NavigationStack';
 const primaryColor = 'rgb(0, 122, 255)';
 class LoginStackScreen extends React.Component {
     render() {

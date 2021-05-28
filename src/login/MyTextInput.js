@@ -1,14 +1,14 @@
 import React from 'react';
 import { StyleSheet, TextInput, View } from 'react-native';
 
-import { MaterialCommunityIcons } from '@expo/vector-icons'
+import Icon from 'react-native-vector-icons/Ionicons';
 import colors from '../login/colors';
 
 function MyTextInput({ icon, ...otherProps }) {
     return (
         <View style={styles.container}>
             {/* icon 이 정해 지는 경우에만 조건부 렌더링, && 연산자  */}
-            {icon && <MaterialCommunityIcons name={icon} style={styles.iconStyle} />}
+            {icon && <Icon name={icon} style={styles.iconStyle} />}
             <TextInput style={styles.inputText} {...otherProps}  />
         </View>
     );

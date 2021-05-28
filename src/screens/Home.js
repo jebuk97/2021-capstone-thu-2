@@ -83,7 +83,6 @@ componentDidMount(){
   }
   
   printMenus(menu){
-    
     if(menu.id%2==0) {
     return;
     }

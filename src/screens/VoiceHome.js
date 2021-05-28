@@ -1,10 +1,13 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import { render } from 'react-dom';
 import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox, Modal, Pressable} from 'react-native';
 import { withOrientation } from 'react-navigation';
-import { Ionicons, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
+import Icon from 'react-native-vector-icons/Ionicons';
+import Voice from 'react-native-voice';
+import { Dialogflow_V2 } from 'react-native-dialogflow';
+
 import '../../global'
-import { Audio } from 'expo-av'
+import { set } from 'react-native-reanimated';
 
 var categorys=[];
 var sumPrice = 0;
@@ -12,25 +15,95 @@ const primaryColor = 'rgb(0, 122, 255)';
 var interval;
 
 export function Home(props) {
+
+  const dialogflowConfig = {
+  "type": "service_account",
+  "project_id": "newagent-mhmk",
+  "private_key_id": "ff826ba186dd4dea61581175deb3e01109f43143",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC0CKHuE5YgOyAy\n92XM9DagvkvkcLvbIEXh9SKs39ysDpJzLlXAQbZemOUJzFc+laZe/l35lh1a1HMg\n6hpcuJaB0RoSAy3bU8eHj9Un/+BLVH8yXfGk66IX8t6NJl0/zFv2gTbJFTzZiBEa\nk1YxJGI4eCj5iCtBU3y1SeGLzjLebUz5jBTfNx8Xi3/QyTfqr2FTiLa4NP4YAvna\njitdHYplMrdH/rskK2Q/QhXllGXUjHsNZWEANb/FWkhPTKqxjVHqdWDiG2wukm6x\nprOXGfpCuZoiee07syPM+Czqo4u2wxwsLTROfuiYMfChP6Aj1BTyEEpRsncaoI/m\n/WgmdsWrAgMBAAECggEAC1vsE6BqvXfdjTms06So+bVoBm7Se33qytnzqSKqwrRc\nqyXGRU4gGpHdCaQ58PnyOFYmScQd8Agth2sd5LHE1UYDNhW7Q/ZiRXxev5pWZYpc\nSCpDP9uaK5aoUhGUmpzjRIdclI1hfHwoUBvxuUIJbHSwaSYdTI7e9HVH5NFKxlvV\nu58Z5SaTzpY2aVj2mu8033f2AwIX793EFkzeu2QogeS7n8FFa9DX4u7o9Zs2m3PI\nA5pOhESWE7VB2ssmeZ/9gBu0RsaR9xnOmNHx97k7Y/Nw5Y9oIVCILnWF/f88v+Tx\nfj+b+HDwu26w532g6b66kUtVwk6X5uCAE0TmpHwPUQKBgQD31ISYr1N3DIrCA+1Y\nfxYzTj6LSZXopA58KZqGfwGm8I1v9X9rxlhjgH8UqN9FTXj1ci1RbSM8TdU46jlr\nbuaPTAPplK/4xqb5sMl9ow67UgGDxB97pwjJ7n/knp+ODTeDSUI7wxZ41BoePc5W\nQhjFZs2Brbcb901PXIBLWA734wKBgQC59/f5udvL4Qa/MIL43zJrlG/nxA0qAn3P\nt/NFQvfNCnRGfLoNXVAEyH6J13kfXz5lov/2Zzu5fx0zjCPyQfELix1OSbbvjpDm\nkgK93g2nP4qnjHU1TBC4aC1XvgpiIomXkwwEfXvNyPUxaOtpvhfo1T/+ljdFv+8V\ndyySiUUVmQKBgECR0zZAv9tNnj1sboNXIT6ezTbXJkKls8xvvn36S0DmfcNE0D0R\nQWgzS2jjksBorfItHFeRutN0Z/BbPjiafWGqaX6LKcoEX+7AO88LE8SEWjate5Jo\n86ZBCHtVRLbrBKKlDKerbYhvoppsef0JXZDY9wQpcYLMzQy3SgnXWJcHAoGAF74H\nw7Mt046sHNalsf5U4pU14EIQaC+fPli+zzXoix3tkF42JqSmJaYvOYvv48h2H+W6\nhgvR/TG0WbNnl3NBwfaFzEvu9hCegUFc5j6mQZcELbXp9N78N37dYxlZHARKyrY0\nT5JxrukcHK3HeF2Tkd8/51HoRphlfrkTULYDwukCgYEAhAATu8U1LpLR3LxSgGQa\no4va7jJ7bjNGFbaNq66/N9Jqu1+irwBKOS7Kyt5LRk3x4X+LWexchoOoL+6uPZ2L\nARyZbrrJdLujDF2pcAYpEMDgIoEfYq3em8A0PXHBoefNF67fVScgShl3/3GGMtMj\nrXY+uQvf52oLpGLhKFbAP38=\n-----END PRIVATE KEY-----\n",
+  "client_email": "testmonkeybot@newagent-mhmk.iam.gserviceaccount.com",
+  "client_id": "114847266998083579369",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/testmonkeybot%40newagent-mhmk.iam.gserviceaccount.com"
+}
+
   const [recording, setRecording] = React.useState();
-  const [printText, setPrintText] = React.useState('우측 버튼을 누르고 말하세요.');
+  const [printText, setPrintText] = React.useState('마이크 버튼을 누르고 말하세요.');
   const [cartState, setCartState] = React.useState([]);
   const [voiceState, setVoiceState] = React.useState(false);
   const [menuState, setMenuState] = React.useState([]);
   const [categorysState, setCategorysState] = React.useState([]);
   const [categoryState, setCategoryState] = React.useState(0);
   const [processState, setProcessState] = React.useState(false);
-  const [seconds, setSeconds] = useState(0);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
   const [tableNo, setTableNo] = React.useState(global.tableNo);
-  const [modalVisible, setModalVisible] = useState(true);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [isRecord, setIsRecord] = useState(false);
+  const [text, setText] = useState('');
+  const [df, setDf] = useState('');
+
+  const submitHandler = newResult => {
+    const newArray = [...results, newResult];
+    setMenuState(newArray);
+    console.log(newArray);
+  }
+
+  var text1 = 'NO INPUT';
+  
+  var dfResult = 'NO INPUT';
+  var cart = [];
+
   var record = null;
   var menus=[];
+  const scrollViewRef = useRef();
   
+  const _onSpeechStart = () => {
+    console.log('onSpeechStart');
+    setText('');
+  };
+  const _onSpeechEnd = () => {
+    console.log('onSpeechEnd');
+  };
+  const _onSpeechResults = (event) => {
+    console.log('onSpeechResults : '+ event.value[0]);
+    //setText(event.value[0]);
+    text1 = event.value[0];
+    setText(text1);
+    stopVoice();
+    process();
+  };
+  const _onSpeechError = (event) => {
+    console.log('_onSpeechError');
+    console.log(event.error);
+    // Voice.destroy().then(Voice.removeAllListeners);
+    stopVoice();
+    process();
+    setPrintText('버튼을 누른 후 다시 한 번 말씀해주세요.');
+
+  };
+
   useEffect(() => {
+
+    console.log('----->sibal', cartState);
+    Dialogflow_V2.setConfiguration(
+      dialogflowConfig.client_email,
+      dialogflowConfig.private_key,
+      Dialogflow_V2.LANG_KOREAN,
+      dialogflowConfig.project_id,
+    );
+
+
+    Voice.onSpeechStart = _onSpeechStart;
+    Voice.onSpeechEnd = _onSpeechEnd;
+    Voice.onSpeechResults = _onSpeechResults;
+    Voice.onSpeechError = _onSpeechError;
+
     if(modalVisible==true){
-      startRecording();
+      console.log('recording');
+      _onRecordVoice();
     }
     // onPressCat = onPressCat.bind(this);
     //서버 수신부
@@ -51,7 +124,7 @@ export function Home(props) {
         {
           id: 3,
           img: 'https://img1.daumcdn.net/thumb/R800x0/?scode=mtistory2&fname=https%3A%2F%2Ft1.daumcdn.net%2Fcfile%2Ftistory%2F2719523959479C9B13',
-          menu: '비빔칼국수',
+          menu: '비빔국수',
           price:8000
         }
       ],
@@ -79,55 +152,27 @@ export function Home(props) {
     console.log(getNavigationParams());
 
     return () => {
-      stopRecording('exit');
-      setTimeout(function() {
-      }, 300);
+      Voice.destroy().then(Voice.removeAllListeners);
     };
-  }, []);
+  }, [cartState]);
   
-  async function startRecording() {
-      setModalVisible(true);
-    try {
-      console.log('Requesting permissions..');
-      await Audio.requestPermissionsAsync();
-      await Audio.setAudioModeAsync({
-        allowsRecordingIOS: true,
-        playsInSilentModeIOS: true,
-      }); 
-      console.log('Starting recording..');
-      record = new Audio.Recording();
-      await record.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY);
-      await record.startAsync(); 
-      setRecording(record);
-      setPrintText('듣고 있습니다.');
-      console.log('Recording started');
-    } catch (err) {
-      console.log(err);
-      stopRecording('err');
-    }
+  function stopVoice(){
+    setIsRecord(false);
+    setModalVisible(false);
+    Voice.stop();
   }
 
-  async function stopRecording(stat) {
-    if(!recording){
-      setRecording(record);
-      console.log(recording);
+  const _onRecordVoice = () => {
+    if (isRecord) {
+      stopVoice();
+    } else {
+      console.log('==============================');
+      setModalVisible(true);
+      setPrintText('듣고 있습니다.');
+      Voice.start('ko-KR');
     }
-    console.log('Stopping recording..');
-    setRecording(undefined);
-    setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
-    try {
-      await recording.stopAndUnloadAsync();
-    } catch (error) {
-      console.log(error);
-    }
-    const uri = recording.getURI(); 
-    console.log('Recording stopped and stored at', uri);
-    if(stat!='err' || stat!='exit'){
-      process();
-    }
-    setProcessState(false);
-    setPrintText('우측 마이크 버튼을 누른 후 말하세요.');
-  }
+    setIsRecord(!isRecord);
+  };
 
   function getNavigationParams(){
     let id = false;
@@ -145,14 +190,17 @@ export function Home(props) {
       return (
         <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu)}}>
          <Image 
-          style={{width:'100%', height:200, borderRadius:5}}
+          style={{width:'100%', height:180, borderRadius:5}}
           source={{uri:menu.img}}/>
-        <View>
-          <Text style={{fontSize:32, padding:7, paddingTop:12, textAlign:'center'}}>{menu.menu}</Text>
-        </View>
-        <View>
-          <Text style={{fontSize:24, padding:5, color:primaryColor, textAlign:'center'}}>{menu.price}원</Text>
-        </View>
+          <View style={{width: '100%', alignItems:'center'}}>
+            <View>
+            <Text style={{fontSize:28, paddingTop:12, textAlign:'left'}}>{menu.menu}</Text>
+          </View>
+          <View>
+            <Text style={{fontSize:24, color:primaryColor, textAlign:'right'}}>{menu.price}원</Text>
+          </View>
+          </View>
+       
       </TouchableOpacity>
       );
     }
@@ -162,14 +210,16 @@ export function Home(props) {
     return (
       <TouchableOpacity style={styles.menu} onPress={()=>{onPressMenu(menu.menu)}}>
         <Image 
-          style={{width:'100%', height:200}}
+          style={{width:'100%', height:180, borderRadius:5}}
           source={{uri:menu.img}}/>
-        <View>
-          <Text style={{fontSize:32, padding:7, paddingTop:12, textAlign:'center'}}>{menu.menu}</Text>
-        </View>
-        <View>
-          <Text style={{fontSize:24, padding:5, color:primaryColor, textAlign:'center'}}>{menu.price}원</Text>
-        </View>
+        <View style={{width: '100%', alignItems:'center'}}>
+            <View>
+            <Text style={{fontSize:28, paddingTop:12, textAlign:'left'}}>{menu.menu}</Text>
+          </View>
+          <View>
+            <Text style={{fontSize:24, color:primaryColor, textAlign:'right'}}>{menu.price}원</Text>
+          </View>
+          </View>
       </TouchableOpacity>
           );
     }
@@ -189,7 +239,10 @@ export function Home(props) {
       }
     }
     setCartState(isDup(tempCart, menu, price));
+    
+    console.log('menu added', menu, cartState);
     forceUpdate();
+    
   }
 
   function isDup(cart, menu, price){
@@ -215,8 +268,8 @@ export function Home(props) {
     var temp = categorys && categorys.length > 0 ? categorys.map((category, index)=>(
       <View>
         {categoryState==index ? 
-        (<TouchableOpacity onPress={()=>{onPressCat(index)}} style={{padding:17, borderBottomWidth:3, borderBottomColor:primaryColor}}><Text style={{fontSize:32, color:primaryColor}}>{category}</Text></TouchableOpacity>):
-        (<TouchableOpacity onPress={()=>{onPressCat(index)}} style={{padding:17}}><Text style={{fontSize:32, color:'black'}}>{category}</Text></TouchableOpacity>)
+        (<TouchableOpacity onPress={()=>{onPressCat(index)}} style={{padding:17,paddingTop:8, paddingBottom:8, borderBottomWidth:3, borderBottomColor:primaryColor}}><Text style={{fontSize:28, color:primaryColor}}>{category}</Text></TouchableOpacity>):
+        (<TouchableOpacity onPress={()=>{onPressCat(index)}} style={{padding:17,paddingTop:8, paddingBottom:8}}><Text style={{fontSize:28, color:'black'}}>{category}</Text></TouchableOpacity>)
         }
       </View>
     )):null;
@@ -241,9 +294,6 @@ export function Home(props) {
   }
 
   function onPressDel(menu){
-    popMenu(menu);
-  }
-  function popMenu(menu){
     var cart = cartState;
     var cart2 = [];
     for(var i=0;i<cart.length;i++){
@@ -252,7 +302,10 @@ export function Home(props) {
       }
       cart2.push(cart[i]);
     }
+    setCartState(null);
+    console.log('menu deleted', cart2, cartState);
     setCartState(cart2);
+    forceUpdate();
   }
 
   function handleSubmit(){
@@ -270,6 +323,7 @@ export function Home(props) {
       if(cart[i].menu == menu){
         cart[i].qty += 1;
         setCartState(cart);
+        forceUpdate();
         break;
       }
     }
@@ -281,40 +335,80 @@ export function Home(props) {
         if(cart[i].qty>1){
           cart[i].qty -= 1;
           setCartState(cart);
+          forceUpdate();
           break;
         } else{
-          popMenu(menu);
+          onPressDel(menu);
           break;
         }
       }
     }
   }
 
-  function process(){
+  async function request(message){
+    var temp;
+    await Dialogflow_V2.requestQuery(message, 
+      result=>handleGoogleResponse(result),
+      error=>console.log(error));
+  }
+
+  function handleGoogleResponse(result){
+    console.log(result);
+    let text = result.queryResult.parameters;
+    sendBotResponse(text);
+  }
+
+  function sendBotResponse(text){
+    setDf(text);
+    dfResult = text;
+    console.log('param : ', text, text.length);
+    if(text.length==undefined){
+      setPrintText('버튼을 누른 후 다시 한 번 말씀해주세요.');
+      return;
+    }
+    if(dfResult =='NOINPUT'){
+      setPrintText('버튼을 누른 후 다시 한 번 말씀해주세요.');
+      return;
+    } else{
+      var tempCart1 = [];
+      for(var i=0;i<dfResult.FOOD.length;i++){
+        var tempObj = {};
+        tempObj.menu=dfResult.FOOD[i];
+        tempObj.qty=dfResult.UNIT[i];
+        if(tempObj.qty==undefined){
+          tempObj.qty=1;
+        }
+      tempCart1.push(tempObj);
+      }
+      for(var i=0;i<tempCart1.length;i++){
+        for(var j=0;j<tempCart1[i].qty;j++){
+          onPressMenu(tempCart1[i].menu);
+        }
+      }
+      console.log('====================menu added', text1, cartState);
+    }
+  } 
+
+  function temp(){
+    console.log('temp func');
+  }
+
+  async function process(){
+    text1 = text1.replace(/ /gi, '');
+    console.log('origin : ', cartState);
     setProcessState(true);
     setPrintText('처리 중 입니다.');
-    console.log('processing');  
-    
-    var tempCart = [
-      {
-        menu:'칼국수',
-        qty: 2
-      },
-      {
-        menu:'칼국수',
-        qty: 2
-      }
-    ];
-    for(var i=0;i<tempCart.length;i++){
-      for(var j=0;j<tempCart[i].qty;j++){
-        onPressMenu(tempCart[i].menu);
-      }
-    }
     setModalVisible(false);
+    setDf(null);
+    console.log('Requesting to DialogFlow... : ', text1);
+    request(text1);
+    
+    forceUpdate();
+    setPrintText('마이크 버튼을 누르고 말하세요.');
   }
 
   function handleConfirm(){
-    stopRecording();
+    _onRecordVoice();
   }
 
     const menus1 = menuState;
@@ -332,12 +426,13 @@ export function Home(props) {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={[styles.modalText, {fontSize:32}]}>{printText}</Text>
+              <Text>{printText}</Text>
+              <Text style={[styles.modalText, {fontSize:32}]}>{text}</Text>
               <Pressable flexDirection='row'
                 style={[styles.button, styles.buttonClose, {backgroundColor: 'rgb(255,45,85)'}]}
                 onPress={()=>handleConfirm()}
               >
-               <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
+               <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Icon name="ios-stop-sharp" style={{fontSize:24}}></Icon></Text>
               </Pressable>
             </View>
           </View>
@@ -368,7 +463,10 @@ export function Home(props) {
           </ScrollView>
           <View style={styles.order}>
               <View style={{margin:20}}><Text style={{textAlign:'center', fontSize: 24}}>주문내역</Text></View>
-              <ScrollView style={{minHeight:'60%'}}>
+              <ScrollView style={{minHeight:'60%'}}
+              ref={scrollViewRef}
+              onContentSizeChange={() => scrollViewRef.current.scrollToEnd({ animated: true })}
+              >
               {cartState.map(cart=>(
                 <View style={{margin:10, paddingLeft:10, paddingRight:10}}>
                   <View flexDirection='row' style={{padding:10}}>
@@ -397,19 +495,17 @@ export function Home(props) {
                 <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
               </View>
             </View>
-            <View flexDirection='row' style={{width:'65%', alignItems:'center'}}>
-      {recording ? 
-      <Text style={{fontSize:24, color:'rgb(255,45,85)', marginLeft:10}}>{printText}</Text>: 
-      <Text style={{fontSize:24, marginLeft:10, color:'black'}}>{printText}</Text>}
-      <TouchableOpacity
-        onPress={recording ? stopRecording : startRecording}
-        style={[styles.button,{backgroundColor:'rgb(255,45,85)', marginLeft:'auto'}]}
-      >
-        {recording ? <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-stop-sharp" style={{fontSize:24}}></Ionicons></Text>
-         : <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Ionicons name="ios-mic" style={{fontSize:24}}></Ionicons></Text>}
-      </TouchableOpacity>
+            <View flexDirection='row' style={{width:'65%', alignItems:'center', backgroundColor:'rgb(242, 242, 247)'}}>
+      <Text style={[ styles.shadow, {fontSize:32, marginLeft:10, color:'black', padding:5, paddingLeft:10, paddingRight:10, backgroundColor:'white', borderRadius:30, marginBottom: 15}]}>{printText}</Text>
+      
     </View>
-    
+    <TouchableOpacity
+        onPress={()=>_onRecordVoice()}
+        style={[styles.button, {backgroundColor:'rgb(255,45,85)', marginLeft:'auto', position: 'absolute', left: -190, bottom:10, width:180, height:200, zIndex:10}]}
+      >
+        
+        <Text style={{padding:0, color:'white', textAlign:'center',marginTop:'auto', marginBottom:'auto'}}><Icon name="ios-mic" style={{fontSize:48}}></Icon></Text>
+      </TouchableOpacity>
     </View>
         
     );
@@ -423,9 +519,16 @@ const styles = StyleSheet.create({
     margin:10,
     backgroundColor: primaryColor,
   },
+  shadow:{
+    shadowColor: "#30C1DD",
+    shadowRadius: 10,
+    shadowOpacity: 0.6,
+    elevation: 8,
+    shadowOffset: {width:0, height: 4}
+  },
   order:{
     backgroundColor: 'white',
-    height: chartHeight,
+    height: chartHeight-30,
     width: '35%',
     top: 0,
     marginTop:0, 
@@ -438,9 +541,11 @@ const styles = StyleSheet.create({
   menu:{
     backgroundColor: 'white',
     margin:10,
+    marginTop:5,
+    marginBottom:5,
     borderRadius: 5,
     width: '47%',
-    height:300
+    height:280
   },
   menuContainer:{
     flexDirection:'row',
@@ -450,7 +555,7 @@ const styles = StyleSheet.create({
     width:'61%',
     marginLeft:15,
     overflow: 'scroll',
-    marginTop:15
+    marginTop:5
   },
   orderButtonContainer:{
     marginTop:20,

@@ -6,6 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import MyTextInput from '../login/MyTextInput';
 import MyButton from '../login/MyButton'
+import Icon from 'react-native-vector-icons/Ionicons';
 
 import Navigation from '../../src/navigation/NavigationStack';
 const primaryColor = 'rgb(0, 122, 255)';
@@ -44,10 +45,10 @@ export default function LoginScreen() {
     return (
         <View style={styles.container}>
             <Image style={styles.logo} 
-                //source={require("../assets/icon.png")} 
+                source={require("../../assets/logo.png")} 
             />
             <MyTextInput 
-                icon="account"//아이콘을 정했습니다.
+                icon="list"//아이콘을 정했습니다.
                 autoCapitalize="none"// 입력되는 문자를 자동으로 대문자로 만들지 못하게 합니다.
                 autoCorrect={false}// 오타 자동수정 기능을 끕니다.
                 autoCompleteType="off"// 자동 완성 힌트 기능을 끕니다.
@@ -101,6 +102,7 @@ const styles = StyleSheet.create({
       height: 150,
       alignSelf: 'center',
       marginTop: 100,
+      marginBottom: 50,
   },
   centeredView: {
       flex: 1,
