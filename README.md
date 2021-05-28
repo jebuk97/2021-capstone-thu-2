@@ -9,7 +9,7 @@
  ```
  
 ## 1. 리액트 네이티브 세팅
-참고 : https://velog.io/@s2ilver8/React-Native-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0
+###참고 : https://velog.io/@s2ilver8/React-Native-%EC%8B%9C%EC%9E%91%ED%95%98%EA%B8%B0
 자바, 안드로이드 스튜디오, 파이썬, 안드로이드 가상머신 또는 안드로이드 기기 필요
 
 
