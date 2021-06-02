@@ -32,8 +32,8 @@ function LoginScreen() {
     useEffect(() => {
       // onPressCat = onPressCat.bind(this);
       //로그인 여부 확인
-      setIsLogin(true);  //temp
-      if(setIsLogin){
+      setIsLogin(false);  //temp
+      if(isLogin){
         navigation.navigate('Table');
       }
   
@@ -43,7 +43,7 @@ function LoginScreen() {
 
     function handleSubmit(username, password, navigation) {
         console.log(username+' '+password);
-        if(username=='1234' & password=='1234')
+        if(username=='admin' && password=='1234')
             navigation.navigate('Table')
         else
             setModalVisible(true);
@@ -52,10 +52,10 @@ function LoginScreen() {
     return (
         <View>
             <Image style={styles.logo} 
-                //source={require("../assets/icon.png")} 
+                source={require("../../assets/logo.png")} 
             />
             <MyTextInput 
-                icon="account"//아이콘을 정했습니다.
+                icon="person"//아이콘을 정했습니다.
                 autoCapitalize="none"// 입력되는 문자를 자동으로 대문자로 만들지 못하게 합니다.
                 autoCorrect={false}// 오타 자동수정 기능을 끕니다.
                 autoCompleteType="off"// 자동 완성 힌트 기능을 끕니다.
@@ -67,7 +67,7 @@ function LoginScreen() {
          
             
             <MyTextInput 
-                icon="account-key-outline"
+                icon="lock-closed"
                 autoCapitalize="none"
                 autoCorrect={false}
                 autoCompleteType="off"

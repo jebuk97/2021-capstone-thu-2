@@ -2,49 +2,88 @@ import React, {useEffect, useState} from 'react';
 
 import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import Home from './VoiceHome';
+import axios from 'axios';
 
 var orders= [];
 var sumPrice = 0;
 var sumQty = 0;
-
-const primaryColor = 'rgb(0, 122, 255)';
+var temp2 = [];
+const primaryColor = '#FF555F';
 export default function TableDetails({route, navigation}) {
   const { num } = route.params;
   const [orderState, setOrderState] = useState();
-  useEffect(() => {
-    // onPressCat = onPressCat.bind(this);
-    //서버 수신부
-    orders=[{
-      menu: '돈까스',
-      qty: 1,
-      price: 8000
-    },
-    {
-        menu: '치즈돈까스',
-        qty: 2,
-        price: 8000
-    }]
-    setOrderState(orders);
+  const [sum, setSum] = useState(0);
+  const [qty, setQty] = useState(0);
+  useEffect(async ()=> {
+   
+    await loadTables();
+
     sumPrice=sumPriceHandler();
     sumQty=sumQtyHandler();
     return () => {
     };
   }, []);
 
+  async function loadTables() {
+    const url = 'http://13.72.64.183:3000/order/giveorder/all'
+    const response = await axios.get(url);
+    console.log(response);
+    var temp = [];
+    temp2 = [];
+    setSum(0);
+    setQty(0);
+    var tableNo = [];
+    for(var i=0;i<response.data.result.length;i++){
+      console.log(response.data.result[i])
+      temp.push(response.data.result[i]);
+    }
+    console.log('table loaded (temp) : ', temp)
+    for(var i = 0; i < temp.length;i++){
+        console.log(temp[i].tableNo, num);
+        if(temp[i].tableNo != num){
+            continue;
+        }
+
+        var menuTemp = {tableNo:0, menus:[]};
+        menuTemp.menus.push(temp[i]);
+       
+        menuTemp.tableNo = temp[i].tableNo;
+        console.log(checkTable(temp[i].tableNo))
+        
+        var index = checkTable(temp[i].tableNo)
+        if(index==-1){
+            temp2.push(menuTemp);
+            console.log('new Table added : ', temp2);
+        } else{
+            temp2[index].menus.push(temp[i]);
+            console.log('new Menu added : ', temp2);
+        }
+    }
+    setOrderState(temp2);
+  }
+  function checkTable(num){
+    for(var i=0;i<temp2.length;i++){
+        console.log('temp2[i], num : ', temp2[i].tableNo, num);
+        if(temp2[i].tableNo == num){
+            console.log('checked', i);
+            return i;
+        }
+    }
+    return -1;
+  }
   function sumPriceHandler(){
       var sum = 0;
-      for(var i=0;i<orders.length;i++){
-        sum += orders[i].price * orders[i].qty;
+      for(var i=0;i<temp2[0].menus.length;i++){
+        sum += temp2[0].menus[i].price * temp2[0].menus[i].qty;
       }
-      return sum;
+      setSum(sum);
     }
     function sumQtyHandler(){
       var sum = 0;
-      for(var i=0;i<orders.length;i++){
-        sum += orders[i].qty;
+      for(var i=0;i<temp2[0].menus.length;i++){
+        sum += temp2[0].menus[i].qty;
       }
-      return sum;
+      setQty(sum);
     }
     function handlePayment(){
       //서버에 통보
@@ -68,7 +107,8 @@ export default function TableDetails({route, navigation}) {
                         </Text>
                     </View>
                 <ScrollView>
-                {orderState&&orderState.length>0?orderState.map(order=>(
+                {temp2&&temp2.length>0?temp2[0].menus.map(order=>(
+                     
                     <View flexDirection='row' style={styles.listContainer}>
                         <Text style={{width:'50%', fontSize:28}}>
                             {order.menu}
@@ -89,10 +129,10 @@ export default function TableDetails({route, navigation}) {
                             총액
                         </Text>
                         <Text style={{width:'20%', fontSize:28}}>
-                            {sumQty}개
+                            {qty}개
                         </Text>
                         <Text style={{width:'30%', fontSize:28, color:primaryColor}}>
-                            {sumPrice}원
+                            {sum}원
                         </Text>
                     </View>
                         <TouchableOpacity onPress={()=>handlePayment()} style={styles.button}><Text style={{color:'white', fontSize:32, textAlign:'center'}}>결제 완료</Text></TouchableOpacity>

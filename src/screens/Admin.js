@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import axios from 'axios';
 import { Image, render } from "react-native";
 import{
     ScrollView,
@@ -17,43 +18,72 @@ import TableDetails from '../screens/TableDetails'
 
 // const [menu1, setMenu1] = useState();
 // const [menu2, setMenu2] = useState();
-// const [menu3, setMenu3] = useState();;
+// const [menu3, setMenu3] = useState();
 
+var temp2 = [];
 export default function Table(){
     const navigation = useNavigation();
     const [tableState, setTableState] = useState();
-    useEffect(() => {
+    const [menu, setMenu] = useState();
+    useEffect(async () => {
         // onPressCat = onPressCat.bind(this);
         //서버 수신부
-        setTableState([
-            {
-                num : 1,
-                menus : [
-                    {menu : '돈까스', qty: '1', price : '8000'},
-                    {menu : '치즈돈까스', qty: '1', price : '8000'},
-                ]  //임시
-            },
-            {
-                num : 2,
-                menus : [
-                    {menu : '치즈돈까스', qty: '1', price : '8000'}, 
-                ] //임시
-            }
-        ]
-        )
+        temp2 = [];
+        await loadTables();
     
         return () => {
         };
       }, []);
+
+      async function loadTables() {
+        const url = 'http://13.72.64.183:3000/order/giveorder/all'
+        const response = await axios.get(url);
+        console.log(response);
+        var temp = [];
+        
+        var tableNo = [];
+        for(var i=0;i<response.data.result.length;i++){
+          console.log(response.data.result[i])
+          temp.push(response.data.result[i]);
+        }
+        console.log('table loaded (temp) : ', temp)
+        for(var i = 0; i < temp.length;i++){
+            var menuTemp = {tableNo:0, menus:[]};
+            menuTemp.menus.push(temp[i]);
+            menuTemp.tableNo = temp[i].tableNo;
+            console.log(checkTable(temp[i].tableNo))
+            
+            var index = checkTable(temp[i].tableNo)
+            if(index==-1){
+                temp2.push(menuTemp);
+                console.log('new Table added : ', temp2);
+            } else{
+                temp2[index].menus.push(temp[i]);
+                console.log('new Menu added : ', temp2);
+            }
+        }
+        setTableState(temp2);
+      }
+      function checkTable(num){
+        for(var i=0;i<temp2.length;i++){
+            console.log('temp2[i], num : ', temp2[i].tableNo, num);
+            if(temp2[i].tableNo == num){
+                console.log('checked', i);
+                return i;
+            }
+        }
+        return -1;
+      }
+
       const tables = tableState;
         return(
             <ScrollView style={styles.container}>
-            {tables&&tables.length>0?tables.map(table=>(
-            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('TableDetails',{num:table.num})}>
-                    <Text style={styles.btntext}>{table.num}</Text>
+            {temp2&&temp2.length>0?temp2.map(table=>(
+            <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('TableDetails',{num:table.tableNo})}>
+                    <Text style={styles.btntext}>{table.tableNo}ㆍ</Text>
                     <View style={{flexDirection: 'row'}}>
                         {table.menus.map(menu=>(
-                            <Text style={styles.Text, {paddingRight:10, fontSize: 24}}>{menu.menu}:{menu.qty}</Text>
+                            <Text style={styles.Text, {color:'white', paddingRight:10, fontSize: 24}}>{menu.menu}:{menu.qty}</Text>
                         ))}
                     </View>
                     </TouchableOpacity>
@@ -106,11 +136,11 @@ const styles = StyleSheet.create({
      padding :20,
      backgroundColor:'#FF5252',
      marginTop:30,
+     borderRadius:10,
  },
  btntext:{
      color:'#fff',
      fontWeight:'bold',
-     marginRight:10,
      fontSize: 24
  },
  menutext:{
