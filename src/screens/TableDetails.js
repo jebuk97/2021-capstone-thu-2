@@ -14,8 +14,8 @@ export default function TableDetails({route, navigation}) {
   useEffect(async ()=> {
     setOrderState();
     await loadTables();
-    sumPrice=sumPriceHandler();
-    sumQty=sumQtyHandler();
+    sumPriceHandler();
+    sumQtyHandler();
     return () => {
     };
   }, []);

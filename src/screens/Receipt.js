@@ -15,8 +15,8 @@ export default function TableDetails({navigation}) {
   useEffect(async ()=> {
     setOrderState();
     await loadTables();
-    sumPrice=sumPriceHandler();
-    sumQty=sumQtyHandler();
+    sumPriceHandler();
+    sumQtyHandler();
     return () => {
     };
   }, []);
@@ -93,6 +93,7 @@ export default function TableDetails({navigation}) {
       for(var i=0;i<temp2[0].menus.length;i++){
         sum += temp2[0].menus[i].qty;
       }
+      console.log('qtysum', sum);
       setQty(sum);
     }
     function handlePayment(){
