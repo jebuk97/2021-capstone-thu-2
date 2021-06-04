@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
 import { Image, StyleSheet, Modal, Text, Pressable } from 'react-native';
 import { View } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 import MyTextInput from '../login/MyTextInput';
 import MyButton from '../login/MyButton'
-import Icon from 'react-native-vector-icons/Ionicons';
 
-import Navigation from '../../src/navigation/NavigationStack';
 const primaryColor = 'rgb(0, 122, 255)';
 
 export default function LoginScreen() {
@@ -18,7 +15,6 @@ export default function LoginScreen() {
     // 사용자가 텍스트를 입력하면 '상태(state)'가 바뀝니다. -> useState hook을 활용합니다.
     // useState hook은 초깃값을 담고 있는 변수와 값을 바꾸는(갱신하는) 펑션으로 이루어진 배열임을 기억합니다.
     const [username, setUsername] = useState();
-    const [password, setPassword] = useState();
     const [modalVisible, setModalVisible] = useState(false);
     const [modalText, setModalText] = useState();
 

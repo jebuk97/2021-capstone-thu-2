@@ -1,24 +1,13 @@
 import React, {useState} from 'react';
-import { Image, render } from "react-native";
 import{
     StyleSheet,
     Text,
     View,
-    ImageBackground,
-    Button,
     TouchableOpacity
 } from 'react-native';
-// import 'react-native-gesture-handler';
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import TableDetails from '../screens/TableDetails'
-import { useNavigation } from '@react-navigation/native';
 const Stack = createStackNavigator();
-
-// const [menu1, setMenu1] = useState();
-// const [menu2, setMenu2] = useState();
-// const [menu3, setMenu3] = useState();
-
 const App = () => {
     return (
          <Stack.Navigator>

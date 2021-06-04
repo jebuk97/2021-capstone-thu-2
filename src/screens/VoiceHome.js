@@ -1,21 +1,12 @@
 import React, {useEffect, useState, useRef} from 'react';
-import { render } from 'react-dom';
-import { View, Button, Image, TouchableOpacity, LinearLayout, Text, StyleSheet, ScrollView, Dimensions, FlexBox, Modal, Pressable} from 'react-native';
-import { withOrientation } from 'react-navigation';
+import { View, Image, TouchableOpacity, Text, StyleSheet, ScrollView, Dimensions, Modal, Pressable, BackHandler} from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import Voice from 'react-native-voice';
 import { Dialogflow_V2 } from 'react-native-dialogflow';
-import Axios from 'axios';
 
 import '../../global'
-import { set } from 'react-native-reanimated';
 import axios from 'axios';
-
-var categorys=[];
-var sumPrice = 0;
 const primaryColor = 'rgb(0, 122, 255)';
-var interval;
-var count = 0;
 
 export function Home(props) {
 
@@ -31,35 +22,24 @@ export function Home(props) {
     "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
     "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/testmoney%40newagent-mhmk.iam.gserviceaccount.com"
   }
-  const [recording, setRecording] = React.useState();
+
   const [printText, setPrintText] = React.useState('마이크 버튼을 누르고 말하세요.');
   const [cartState, setCartState] = React.useState([]);
-  const [voiceState, setVoiceState] = React.useState(false);
   const [menuState, setMenuState] = React.useState([]);
   const [categorysState, setCategorysState] = React.useState([]);
   const [categoryState, setCategoryState] = React.useState(0);
-  const [orderId, setOrderId] = React.useState(0);
   const [processState, setProcessState] = React.useState(false);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
-  const [tableNo, setTableNo] = React.useState(global.tableNo);
   const [modalVisible, setModalVisible] = useState(false);
   const [isRecord, setIsRecord] = useState(false);
   const [text, setText] = useState('');
   const [df, setDf] = useState('');
 
-  const submitHandler = newResult => {
-    const newArray = [...results, newResult];
-    setMenuState(newArray);
-    console.log(newArray);
-  }
-
   var text1 = 'NO INPUT';
   
   var dfResult = 'NO INPUT';
-  var cart = [];
   var menus = [];
-  var record = null;
   var categorys=[];
   const scrollViewRef = useRef();
   
@@ -89,7 +69,14 @@ export function Home(props) {
   };
 
   useEffect(async () => {
+    const backAction = () => {
+      return true;
+    };
 
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
     console.log('----->sibal', cartState);
     Dialogflow_V2.setConfiguration(
       dialogflowConfig.client_email,

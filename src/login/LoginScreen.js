@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet, Modal, Text, Pressable } from 'react-native';
 import { View } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 
 import MyTextInput from '../login/MyTextInput';

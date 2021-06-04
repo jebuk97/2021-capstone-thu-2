@@ -5,34 +5,30 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import axios from 'axios';
 import '../../global'
 
-var orders= [];
-var sumPrice = 0;
-var sumQty = 0;
 var temp2 = [];
 const primaryColor = 'rgb(0, 122, 255)';
-export default function TableDetails({route, navigation}) {
+export default function TableDetails({navigation}) {
   const [orderState, setOrderState] = useState();
   const [sum, setSum] = useState(0);
   const [qty, setQty] = useState(0);
   var num = global.tableNo;
   useEffect(async ()=> {
+    setOrderState();
     await loadTables();
-
     sumPrice=sumPriceHandler();
     sumQty=sumQtyHandler();
     return () => {
     };
-  }, [temp2]);
+  }, []);
 
   async function loadTables() {
-    const url = 'http://13.72.64.183:3000/order/giveorder/all'
+    const url = 'http://13.72.64.183:3000/order/giveorder/recovery'
     const response = await axios.get(url);
     console.log(response);
     var temp = [];
     temp2 = [];
     setSum(0);
     setQty(0);
-    var tableNo = [];
     for(var i=0;i<response.data.result.length;i++){
       console.log(response.data.result[i]);
       temp.push(response.data.result[i]);
@@ -55,12 +51,26 @@ export default function TableDetails({route, navigation}) {
             temp2.push(menuTemp);
             console.log('new Table added : ', temp2);
         } else{
-            temp2[index].menus.push(temp[i]);
+            var dup = isDup(temp[i].menu, index);
+            console.log('duplicated?', dup);
+            if(dup=='false')
+                temp2[index].menus.push(temp[i]);
+            else
+                temp2[index].menus[dup].qty += temp[i].qty;
             console.log('new Menu added : ', temp2);
         }
     }
     setOrderState(temp2);
   }
+
+  function isDup(menu, index){
+    for(var i=0;i<temp2[index].menus.length;i++){
+        if(temp2[index].menus[i].menu == menu)
+            return i;
+    }
+    return 'false';
+  }
+
   function checkTable(num){
     for(var i=0;i<temp2.length;i++){
         console.log('temp2[i], num : ', temp2[i].tableNo, num);

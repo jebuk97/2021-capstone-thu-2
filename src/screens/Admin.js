@@ -24,7 +24,6 @@ var temp2 = [];
 export default function Table(){
     const navigation = useNavigation();
     const [tableState, setTableState] = useState();
-    const [menu, setMenu] = useState();
     useEffect(async () => {
         // onPressCat = onPressCat.bind(this);
         //서버 수신부
@@ -33,23 +32,24 @@ export default function Table(){
     
         return () => {
         };
-      }, []);
+      }, [temp2]);
 
       async function loadTables() {
-        const url = 'http://13.72.64.183:3000/order/giveorder/all'
+        const url = 'http://13.72.64.183:3000/order/giveorder/recovery'
         const response = await axios.get(url);
         console.log(response);
         var temp = [];
-        
-        var tableNo = [];
+        temp2 = [];
         for(var i=0;i<response.data.result.length;i++){
-          console.log(response.data.result[i])
+          console.log(response.data.result[i]);
           temp.push(response.data.result[i]);
         }
         console.log('table loaded (temp) : ', temp)
         for(var i = 0; i < temp.length;i++){
+             
             var menuTemp = {tableNo:0, menus:[]};
             menuTemp.menus.push(temp[i]);
+           
             menuTemp.tableNo = temp[i].tableNo;
             console.log(checkTable(temp[i].tableNo))
             
@@ -58,11 +58,24 @@ export default function Table(){
                 temp2.push(menuTemp);
                 console.log('new Table added : ', temp2);
             } else{
-                temp2[index].menus.push(temp[i]);
+                var dup = isDup(temp[i].menu, index);
+                console.log('duplicated?', dup);
+                if(dup=='false')
+                    temp2[index].menus.push(temp[i]);
+                else
+                    temp2[index].menus[dup].qty += temp[i].qty;
                 console.log('new Menu added : ', temp2);
             }
         }
         setTableState(temp2);
+      }
+    
+      function isDup(menu, index){
+        for(var i=0;i<temp2[index].menus.length;i++){
+            if(temp2[index].menus[i].menu == menu)
+                return i;
+        }
+        return 'false';
       }
       function checkTable(num){
         for(var i=0;i<temp2.length;i++){

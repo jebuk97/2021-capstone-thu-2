@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { Alert, Modal, StyleSheet, Text, Pressable, View } from "react-native";
-import { StackNavigator } from 'react-navigation';
 const primaryColor = 'rgb(0, 122, 255)';
 
 class App extends Component {

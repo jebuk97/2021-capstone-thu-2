@@ -1,10 +1,7 @@
-import React from 'react';
-
 import { createAppContainer } from 'react-navigation';
 
 import { createSidebarNavigator } from '../tabs';
-import { Home, Receipt, VoiceHome, Admin, Modal, Table/*, VoiceHome2 */} from '../screens';
-import { LoginScreen } from '../login/LoginScreen';
+import {  Receipt, VoiceHome, Modal } from '../screens';
 
 const sidebarNavigator = createSidebarNavigator(
   {

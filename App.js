@@ -1,4 +1,4 @@
-import React, { Component, StyleSheet } from 'react';
+import React, { Component } from 'react';
 
 import 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
@@ -9,9 +9,12 @@ import Home from './App2';
 import Admin from './src/screens/Admin';
 import TableDetails from './src/screens/TableDetails';
 
+import { LogBox } from 'react-native';
+
 
 const Stack = createStackNavigator();
-
+LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+LogBox.ignoreAllLogs();//Ignore all log notifications
 
 export default class App extends Component {
   constructor() {
