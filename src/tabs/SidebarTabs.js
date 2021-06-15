@@ -16,6 +16,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     overflow: 'hidden',
     paddingHorizontal: 20,
+    borderRadius: 5,
   },
   voiceTab: {
     flexDirection: 'column',
@@ -41,18 +42,21 @@ const styles = StyleSheet.create({
 const SidebarTabs = ({ navigation, descriptors }) => {
   const { routes, index } = navigation.state;
   return (
-    <View style={[styles.tabContainer, {paddingTop:20}]}>
+    <View style={[styles.tabContainer, {paddingTop:20, marginLeft:5, marginRight:5}]}>
       <View style={styles.tab, {height:'auto', marginTop:10}}>
           <Image source={require('../../assets/logo.png')} style={{width:100, height:100}}></Image>     
       </View>
       <View style={[styles.tab, {height: 100, flexDirection:'column'}]}>
-          <Text style={{fontSize:16}}>Table No. </Text>  
-          <Text style={{fontSize:48}}>{global.tableNo}</Text>
+          <Text style={{fontFamily: "Inter-Medium", fontSize:16}}>Table No. </Text>  
+          <Text style={{fontSize:48, fontFamily: "Inter-Medium"}}>{global.tableNo}</Text>
       </View>
         {routes.map((route, tabIndex) => {
             const { routeName, params } = route;
             const { icon, tabName } = params || {};
-            const color = tabIndex === index ? 'black' : 'grey';
+            const color = tabIndex === index ? 'white' : 'black';
+            const selected = tabIndex === index ? 
+            {backgroundColor: 'rgb(0, 122, 255)',
+            color: 'white'} : {};
             const tabStyle = tabName === "음성 주문" ? styles.voiceTab : styles.tab;
             return (
                 tabName=='관리자 모드' && global.TableNo == 'admin'?undefined : <TouchableOpacity
@@ -61,7 +65,7 @@ const SidebarTabs = ({ navigation, descriptors }) => {
                       otherParams: 'ohter',
                       navigation: navigation,
                     });}}
-                    style={tabStyle}
+                    style={[tabStyle, selected]}
                     key={route.routeName}
                     >
                       {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import axios from 'axios';
 import { Image, render } from "react-native";
 import{
@@ -21,16 +21,25 @@ import TableDetails from '../screens/TableDetails'
 // const [menu3, setMenu3] = useState();
 
 var temp2 = [];
+
+
 export default function Table(){
     const navigation = useNavigation();
-    const [tableState, setTableState] = useState();
-    useEffect(async () => {
+    const [tableState, setTableState] = useState([]);
+    const [time, setTime] = useState(0);
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
+
+    useEffect(() => {
         // onPressCat = onPressCat.bind(this);
         //서버 수신부
         temp2 = [];
-        await loadTables();
-    
-        return () => {
+        //await loadTables();
+        const tick = setTimeout(() => {
+            handleTimeout();
+        }, 1000);
+        
+        return () => { clearTimeout(tick);
         };
       }, [temp2]);
 
@@ -68,8 +77,19 @@ export default function Table(){
             }
         }
         setTableState(temp2);
+        forceUpdate();
       }
-    
+      
+     async function handleTimeout(){
+        if(time==0){
+            await loadTables();
+            console.log(tableState);
+            setTime(5);
+        }else{
+            setTime(time - 1);
+        }
+      }
+
       function isDup(menu, index){
         for(var i=0;i<temp2[index].menus.length;i++){
             if(temp2[index].menus[i].menu == menu)
@@ -91,12 +111,13 @@ export default function Table(){
       const tables = tableState;
         return(
             <ScrollView style={styles.container}>
-            {temp2&&temp2.length>0?temp2.map(table=>(
+                <Text style={{fontFamily: "Inter-Medium"}}>Reload in {time}s...</Text>
+            {tables&&tables.length>0?tables.map(table=>(
             <TouchableOpacity style={styles.button} onPress={()=>navigation.navigate('TableDetails',{num:table.tableNo})}>
                     <Text style={styles.btntext}>{table.tableNo}ㆍ</Text>
                     <View style={{flexDirection: 'row'}}>
                         {table.menus.map(menu=>(
-                            <Text style={styles.Text, {color:'white', paddingRight:10, fontSize: 24}}>{menu.menu}:{menu.qty}</Text>
+                            <Text style={styles.Text, {fontFamily: "Inter-Medium",color:'white', paddingRight:10, fontSize: 24}}>{menu.menu} : {menu.qty}</Text>
                         ))}
                     </View>
                     </TouchableOpacity>
@@ -152,11 +173,13 @@ const styles = StyleSheet.create({
      borderRadius:10,
  },
  btntext:{
+     fontFamily: "Inter-Medium", 
      color:'#fff',
-     fontWeight:'bold',
+     //fontWeight:'bold',
      fontSize: 24
  },
  menutext:{
+    fontFamily: "Inter-Medium", 
     color:'#000',
     fontWeight:'bold',
     fontSize: 24,

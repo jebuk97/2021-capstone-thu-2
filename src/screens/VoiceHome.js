@@ -169,10 +169,10 @@ export function Home(props) {
           source={{uri:menu.img}}/>
           <View style={{width: '100%', alignItems:'center'}}>
             <View>
-            <Text style={{fontSize:28, paddingTop:12, textAlign:'left'}}>{menu.menu}</Text>
+            <Text style={{ fontFamily: "Inter-Medium", fontSize:28, paddingTop:12, textAlign:'left'}}>{menu.menu}</Text>
           </View>
           <View>
-            <Text style={{fontSize:24, color:primaryColor, textAlign:'right'}}>{menu.price}원</Text>
+            <Text style={{ fontFamily: "Inter-Medium", fontSize:24, color:primaryColor, textAlign:'right'}}>{menu.price}원</Text>
           </View>
           </View>
        
@@ -189,10 +189,10 @@ export function Home(props) {
           source={{uri:menu.img}}/>
         <View style={{width: '100%', alignItems:'center'}}>
             <View>
-            <Text style={{fontSize:28, paddingTop:12, textAlign:'left'}}>{menu.menu}</Text>
+            <Text style={{ fontFamily: "Inter-Medium", fontSize:28, paddingTop:12, textAlign:'left'}}>{menu.menu}</Text>
           </View>
           <View>
-            <Text style={{fontSize:24, color:primaryColor, textAlign:'right'}}>{menu.price}원</Text>
+            <Text style={{ fontFamily: "Inter-Medium", fontSize:24, color:primaryColor, textAlign:'right'}}>{menu.price}원</Text>
           </View>
           </View>
       </TouchableOpacity>
@@ -469,21 +469,21 @@ export function Home(props) {
                   </View>
                   <View flexDirection='row' style={{padding:10}}>
                     <TouchableOpacity onPress={()=>onPressMinus(cart.menu)}><Text style={{fontSize:20, width:30, textAlign:'center'}}>-</Text></TouchableOpacity>
-                    <Text style={{fontSize:20, width:30, textAlign:'center'}}>{cart.qty}</Text> 
+                    <Text style={{ fontFamily: "Inter-Medium", fontSize:20, width:30, textAlign:'center'}}>{cart.qty}</Text> 
                     <TouchableOpacity onPress={()=>onPressPlus(cart.menu)}><Text style={{fontSize:20, width:30, textAlign:'center'}}>+</Text></TouchableOpacity>
-                    <Text style={{fontSize:20, marginLeft:'auto', color:primaryColor}}>{cart.qty*cart.price} 원</Text>
+                    <Text style={{ fontFamily: "Inter-Medium", fontSize:20, marginLeft:'auto', color:primaryColor}}>{cart.qty*cart.price} 원</Text>
                   </View>
                 </View>
               ))}
               </ScrollView>
               <View style={styles.orderButtonContainer}>
                 <View flexDirection='row'>
-                  <Text style={{fontSize:30, textAlign:'left', margin:10, marginRight:'auto'}}>총 수량</Text>
-                  <Text style={{fontSize:30, textAlign:'right', margin:10}}>{sumQtyHandler()} 개</Text>
+                  <Text style={{ fontFamily: "Inter-Medium", fontSize:30, textAlign:'left', margin:10, marginRight:'auto'}}>총 수량</Text>
+                  <Text style={{ fontFamily: "Inter-Medium", fontSize:30, textAlign:'right', margin:10}}>{sumQtyHandler()} 개</Text>
                 </View>
                 <View flexDirection='row'>
-                  <Text style={{fontSize:30, textAlign:'left', margin:10, marginRight:'auto', color:primaryColor}}>총 금액</Text>
-                  <Text style={{fontSize:30, textAlign:'right', margin:10, color:primaryColor}}>{sumPriceHandler()} 원</Text>
+                  <Text style={{ fontFamily: "Inter-Medium", fontSize:30, textAlign:'left', margin:10, marginRight:'auto', color:primaryColor}}>총 금액</Text>
+                  <Text style={{ fontFamily: "Inter-Medium", fontSize:30, textAlign:'right', margin:10, color:primaryColor}}>{sumPriceHandler()} 원</Text>
                 </View>
                 
                 <TouchableOpacity onPress={()=>handleSubmit()} style={styles.button}><Text style={{color:'white',fontSize:30, textAlign:'center',}}>주문하기</Text></TouchableOpacity>
@@ -527,7 +527,7 @@ const styles = StyleSheet.create({
   },
   order:{
     backgroundColor: 'white',
-    height: chartHeight-60,
+    height: chartHeight-70,
     width: '35%',
     top: 0,
     marginTop:0, 
@@ -581,6 +581,8 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 5
   },
+  text: {
+  }
 });
 
 export default Home;

@@ -103,6 +103,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     fontSize: 24,
+    fontFamily: "Inter-Medium"
   },
   modalText: {
     marginBottom: 15,
@@ -116,7 +117,8 @@ const styles = StyleSheet.create({
     width:26,
     height:26,
     fontSize:18,
-    marginLeft:5
+    marginLeft:5,
+    fontFamily: "Inter-Medium"
   }
 });
 

@@ -121,10 +121,10 @@ export default function TableDetails({navigation}) {
                         <Text style={{width:'50%', fontSize:28}}>
                             {order.menu}
                         </Text>
-                        <Text style={{width:'20%', fontSize:28}}>
+                        <Text style={{ fontFamily: "Inter-Medium", width:'20%', fontSize:28}}>
                             {order.qty}개
                         </Text>
-                        <Text style={{width:'30%', fontSize:28}}>
+                        <Text style={{ fontFamily: "Inter-Medium", width:'30%', fontSize:28}}>
                             {order.qty * order.price}원
                         </Text>
                     </View>
@@ -136,10 +136,10 @@ export default function TableDetails({navigation}) {
                         <Text style={{width:'50%', fontSize:28}}>
                             총액
                         </Text>
-                        <Text style={{width:'20%', fontSize:28}}>
+                        <Text style={{ fontFamily: "Inter-Medium", width:'20%', fontSize:28}}>
                             {qty}개
                         </Text>
-                        <Text style={{width:'30%', fontSize:28, color:primaryColor}}>
+                        <Text style={{ fontFamily: "Inter-Medium", width:'30%', fontSize:28, color:primaryColor}}>
                             {sum}원
                         </Text>
                     </View>

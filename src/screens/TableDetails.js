@@ -105,7 +105,7 @@ export default function TableDetails({route, navigation}) {
     return (
         <View style={{ flex: 1,padding:10, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgb(242, 242, 247)'}}>
             <View style={[styles.container]}>
-            <Text style={{margin: 10, fontSize:20}}>Table No. {num}</Text>
+            <Text style={{fontFamily: "Inter-Medium", margin: 10, fontSize:20}}>Table No. {num}</Text>
             <View flexDirection='row' style={styles.listContainer}>
                         <Text style={{width:'50%', fontSize:24}}>
                             메뉴
@@ -121,13 +121,13 @@ export default function TableDetails({route, navigation}) {
                 {temp2&&temp2.length>0?temp2[0].menus.map(order=>(
                      
                     <View flexDirection='row' style={styles.listContainer}>
-                        <Text style={{width:'50%', fontSize:28}}>
+                        <Text style={{fontFamily: "Inter-Medium", width:'50%', fontSize:28}}>
                             {order.menu}
                         </Text>
-                        <Text style={{width:'20%', fontSize:28}}>
+                        <Text style={{fontFamily: "Inter-Medium", width:'20%', fontSize:28}}>
                             {order.qty}개
                         </Text>
-                        <Text style={{width:'30%', fontSize:28}}>
+                        <Text style={{fontFamily: "Inter-Medium", width:'30%', fontSize:28}}>
                             {order.qty * order.price}원
                         </Text>
                     </View>
@@ -139,10 +139,10 @@ export default function TableDetails({route, navigation}) {
                         <Text style={{width:'50%', fontSize:28}}>
                             총액
                         </Text>
-                        <Text style={{width:'20%', fontSize:28}}>
+                        <Text style={{fontFamily: "Inter-Medium", width:'20%', fontSize:28}}>
                             {qty}개
                         </Text>
-                        <Text style={{width:'30%', fontSize:28, color:primaryColor}}>
+                        <Text style={{fontFamily: "Inter-Medium", width:'30%', fontSize:28, color:primaryColor}}>
                             {sum}원
                         </Text>
                     </View>
